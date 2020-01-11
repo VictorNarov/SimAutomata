@@ -28,6 +28,7 @@ import java.util.HashSet;
 public class AFND {
 
     private HashSet<String> estadosFinales;
+    private String estadoInicial;
     private HashSet<TransicionAFND> transiciones;
     private HashSet<TransicionL> transicionesL;
 
@@ -37,6 +38,10 @@ public class AFND {
         this.transicionesL = new HashSet();
     }
 
+    public void setEstadoInicial(String estadoInicial) {
+        this.estadoInicial = estadoInicial;
+    }
+    
     public void setEstadosFinales(HashSet<String> estadosFinales) {
         this.estadosFinales = estadosFinales;
     }
@@ -63,6 +68,10 @@ public class AFND {
     
     public void agregarTransicionL(TransicionL trans) {
         this.transicionesL.add(trans);
+    }
+
+    public String getEstadoInicial() {
+        return estadoInicial;
     }
 
     private HashSet<String> getTransicion(String estado, char simbolo) {
@@ -149,21 +158,21 @@ public class AFND {
 
     public boolean reconocer(String cadena) {
         char[] simbolo = cadena.toCharArray();
-        HashSet<String> estadoInicial = new HashSet();
-        estadoInicial.add("q0");
-        estadoInicial = L_clausura(estadoInicial);
+        HashSet<String> estado = new HashSet();
+        estado.add(this.getEstadoInicial());
+        estado = L_clausura(estado);
 
         for (int i = 0; i < simbolo.length; i++) {
 
-            estadoInicial = getTransicion(estadoInicial, simbolo[i]);
+            estado = getTransicion(estado, simbolo[i]);
 
-            for (String estado : L_clausura(estadoInicial)) {
-                estadoInicial.add(estado);
+            for (String estado2 : L_clausura(estado)) {
+                estado.add(estado2);
             }
 
         }
 
-        return esFinal(estadoInicial);
+        return esFinal(estado);
     }
     
         @Override
@@ -196,10 +205,7 @@ public class AFND {
     public static void main(String[] args) {
         AFND automata = new AFND();
 
-        HashSet<String> estados = new HashSet();
-        for (int i = 0; i < 5; i++) {
-            estados.add("q"+i);
-        }
+        automata.setEstadoInicial("q0");
 
         automata.agregarTransicion("q0", 'a', new HashSet<String>() {
             {

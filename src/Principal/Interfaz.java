@@ -28,71 +28,65 @@ import javax.swing.table.DefaultTableModel;
  * @author victo
  */
 public class Interfaz extends javax.swing.JFrame {
+
     private AFD afd = new AFD();
-    //private AFND afnd = new AFND();
-    
+    private AFND afnd = new AFND();
+
     private HashSet<String> cjtoEstados = new HashSet();
     private HashSet<String> cjtoSimbolos = new HashSet();
     private DefaultTableModel modeloTT;
-    
+
     /**
      * Creates new form Interfaz
      */
     public Interfaz() {
         initComponents();
-        modeloTT = new DefaultTableModel()
-        {
+        modeloTT = new DefaultTableModel() {
             @Override
-            public boolean isCellEditable(int row, int column) {return false;}
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
         };
-        
+
         tablaTransicion.setModel(modeloTT);
-        
+
     }
-    private void vaciarTabla()
-    {
-        while (modeloTT.getRowCount() > 0)
+
+    private void vaciarTabla() {
+        while (modeloTT.getRowCount() > 0) {
             modeloTT.removeRow(0);
+        }
     }
-    public void actualizarTabla()
-    {
+
+    public void actualizarTabla() {
         vaciarTabla();
         Object[] simbolos = cjtoSimbolos.toArray();
-        Object[] columna = new Object[cjtoSimbolos.size()+1];
+        Object[] columna = new Object[cjtoSimbolos.size() + 1];
         columna[0] = "ESTADOS";
         for (int i = 0; i < cjtoSimbolos.size(); i++) {
-            columna[i+1] = simbolos[i];
+            columna[i + 1] = simbolos[i];
         }
         modeloTT.setColumnIdentifiers(columna);
-        
-        
-        columna = new Object[cjtoSimbolos.size()+1];
-        
-            int i=0;
-            for(String e:cjtoEstados) //Por cada estado
-            {
-                columna[0] = e;
-                
-                for (int j = 0; j < cjtoSimbolos.size(); j++) { //Rellena cada columna segun el simbolo de entrada 
-                    if(tipoAFD.isSelected()){
-                        columna[j+1] = afd.getTransicion(e,(tablaTransicion.getColumnName(j+1)).charAt(0));  //Obteniendo la transicion del AFD
-                        System.out.println(afd.getTransicion(e, tablaTransicion.getColumnName(j+1).charAt(0)));
-                    }
-                        else{}
-                        //columna[i+1] = afnd.getTransicion(e, tablaTransicion.getColumnName(i+1).charAt(0));  //Obteniendo la transicion del AFD
-                        i++;
+
+        columna = new Object[cjtoSimbolos.size() + 1];
+
+        for (String e : cjtoEstados) //Por cada estado
+        {
+            columna[0] = e;
+
+            for (int j = 0; j < cjtoSimbolos.size(); j++) { //Rellena cada columna segun el simbolo de entrada 
+                if (tipoAFD.isSelected()) {
+                    columna[j + 1] = afd.getTransicion(e, (tablaTransicion.getColumnName(j + 1)).charAt(0));  //Obteniendo la transicion del AFD
+                } else {
+                }
+
             }
-                modeloTT.addRow(columna);
-                
-            }
-            
-        
-        
-        
-       
-       
+            modeloTT.addRow(columna);
+
+        }
+
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -123,7 +117,6 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         comboEstadoI = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
-        comboEstadoF = new javax.swing.JComboBox<>();
         comboSimbolo = new javax.swing.JComboBox<>();
         tipoAFD = new javax.swing.JRadioButton();
         tipoAFND = new javax.swing.JRadioButton();
@@ -132,6 +125,9 @@ public class Interfaz extends javax.swing.JFrame {
         botonCargar = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        labelEstadoI = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SimAutomata - Víctor Roríguez y Fran Beltrán ");
@@ -253,15 +249,7 @@ public class Interfaz extends javax.swing.JFrame {
         });
 
         jLabel8.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
-        jLabel8.setText("5) Definir estado final");
-
-        comboEstadoF.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
-        comboEstadoF.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "q0" }));
-        comboEstadoF.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboEstadoFActionPerformed(evt);
-            }
-        });
+        jLabel8.setText("5) Definir estados finales");
 
         comboSimbolo.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
         comboSimbolo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Símbolo" }));
@@ -303,6 +291,12 @@ public class Interfaz extends javax.swing.JFrame {
 
         jButton1.setText("Eliminar");
 
+        jButton2.setText("Estados");
+
+        labelEstadoI.setText("Estado incial: ");
+
+        jLabel12.setText("Estados finales:  ");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -317,14 +311,6 @@ public class Interfaz extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 333, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(textCadena)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(botonSimular)
-                        .addGap(15, 15, 15))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -360,12 +346,18 @@ public class Interfaz extends javax.swing.JFrame {
                                         .addComponent(comboDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(comboEstadoF, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(comboEstadoI, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(comboEstadoI, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(labelEstadoI))
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(comboSimbolo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(botonAddT)))
+                                        .addComponent(botonAddT))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jButton2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel12)))
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
@@ -376,7 +368,17 @@ public class Interfaz extends javax.swing.JFrame {
                                 .addComponent(textEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(botonAddEstado)))
-                        .addContainerGap())))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jLabel1))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(textCadena)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botonSimular)))
+                        .addGap(15, 15, 15))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -421,12 +423,14 @@ public class Interfaz extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel7)
-                            .addComponent(comboEstadoI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(comboEstadoI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(labelEstadoI))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel8)
-                            .addComponent(comboEstadoF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                            .addComponent(jButton2)
+                            .addComponent(jLabel12))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(textCadena, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
                             .addComponent(botonSimular, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)))
@@ -434,11 +438,15 @@ public class Interfaz extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(jButton1))
-                .addGap(5, 5, 5)
-                .addComponent(jLabel1))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel10)
+                            .addComponent(jButton1))
+                        .addGap(18, 18, 18))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addContainerGap())))
         );
 
         pack();
@@ -457,12 +465,13 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_comboDestinoActionPerformed
 
     private void comboEstadoIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboEstadoIActionPerformed
-        // TODO add your handling code here:
+        if (tipoAFD.isSelected()) {
+            afd.setEstadoInicial(comboEstadoI.getSelectedItem().toString());
+        } else {
+            afnd.setEstadoInicial(comboEstadoI.getSelectedItem().toString());
+        }
+        labelEstadoI.setText("Estado inicial: " + comboEstadoI.getSelectedItem().toString());
     }//GEN-LAST:event_comboEstadoIActionPerformed
-
-    private void comboEstadoFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboEstadoFActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboEstadoFActionPerformed
 
     private void comboSimboloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSimboloActionPerformed
         // TODO add your handling code here:
@@ -470,19 +479,19 @@ public class Interfaz extends javax.swing.JFrame {
 
     private void botonAddEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAddEstadoActionPerformed
         cjtoEstados.add(textEstado.getText());
-        comboOrigen.addItem(textEstado.getText()); 
+        comboOrigen.addItem(textEstado.getText());
         comboDestino.addItem(textEstado.getText());
         comboEstadoI.addItem(textEstado.getText());
-        comboEstadoF.addItem(textEstado.getText());
+
         actualizarTabla();
     }//GEN-LAST:event_botonAddEstadoActionPerformed
 
     private void tipoAFDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoAFDActionPerformed
-       this.afd = new AFD(); //Reseteamos el AFD
+        this.afd = new AFD(); //Reseteamos el AFD
     }//GEN-LAST:event_tipoAFDActionPerformed
 
     private void tipoAFNDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoAFNDActionPerformed
-       //this.afnd = new AFND(); //Reseteamos el AFD
+        //this.afnd = new AFND(); //Reseteamos el AFD
     }//GEN-LAST:event_tipoAFNDActionPerformed
 
     private void botonAddSimboloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAddSimboloActionPerformed
@@ -492,20 +501,21 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_botonAddSimboloActionPerformed
 
     private void botonAddTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAddTActionPerformed
-       if(tipoAFD.isSelected()) //Obtenemos la transicion de los valores del comboBox
-           afd.agregarTransicion(comboOrigen.getSelectedItem().toString(), comboSimbolo.getSelectedItem().toString().charAt(0), comboDestino.getSelectedItem().toString());
-       else //Debemos desplegar una lista 
-       {
-           comboDestino.setVisible(false);
-           JList listaDestinos = new JList();
-           listaDestinos.setListData(this.cjtoEstados.toArray());
-           Frame ventana = new Frame();
-           ventana.setSize(100, 300);
-           ventana.add(listaDestinos);
-           
-           ventana.setVisible(true);
-       }
-       actualizarTabla();
+        if (tipoAFD.isSelected()) //Obtenemos la transicion de los valores del comboBox
+        {
+            afd.agregarTransicion(comboOrigen.getSelectedItem().toString(), comboSimbolo.getSelectedItem().toString().charAt(0), comboDestino.getSelectedItem().toString());
+        } else //Debemos desplegar una lista 
+        {
+            comboDestino.setVisible(false);
+            JList listaDestinos = new JList();
+            listaDestinos.setListData(this.cjtoEstados.toArray());
+            Frame ventana = new Frame();
+            ventana.setSize(100, 300);
+            ventana.add(listaDestinos);
+
+            ventana.setVisible(true);
+        }
+        actualizarTabla();
     }//GEN-LAST:event_botonAddTActionPerformed
 
     /**
@@ -555,13 +565,14 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> comboDestino;
     private javax.swing.JComboBox<String> comboEjemplo;
-    private javax.swing.JComboBox<String> comboEstadoF;
     private javax.swing.JComboBox<String> comboEstadoI;
     private javax.swing.JComboBox<String> comboOrigen;
     private javax.swing.JComboBox<String> comboSimbolo;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -571,6 +582,7 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel labelEstadoI;
     private javax.swing.JTable tablaTransicion;
     private javax.swing.JTextField textCadena;
     private javax.swing.JTextField textEstado;

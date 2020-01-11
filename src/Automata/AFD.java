@@ -25,7 +25,8 @@ import java.util.HashSet;
  * @author usuario
  */
 public class AFD implements Cloneable, Proceso {
-    public HashSet<String> estadosFinales;
+    private HashSet<String> estadosFinales;
+    private String estadoInicial;
     private HashSet<TransicionAFD> transiciones;
     
     public AFD() {
@@ -49,6 +50,18 @@ public class AFD implements Cloneable, Proceso {
         
         return "";
     }
+
+    public String getEstadoInicial() {
+        return estadoInicial;
+    }
+
+    public void setEstadoInicial(String estadoInicial) {
+        this.estadoInicial = estadoInicial;
+    }
+
+    public void addEstadoFinal(String estadoFinal) {
+        this.estadosFinales.add(estadoFinal);
+    }
     
     @Override
     public boolean esFinal(String estado) {
@@ -58,7 +71,7 @@ public class AFD implements Cloneable, Proceso {
     @Override
     public boolean reconocer(String cadena) {
         char[] simbolo = cadena.toCharArray();
-        String estado="q0";
+        String estado = this.getEstadoInicial();
         
         for (int i = 0; i < simbolo.length; i++) {
             estado = getTransicion(estado,simbolo[i]);
