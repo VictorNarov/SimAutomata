@@ -17,6 +17,7 @@
 package Automata;
 
 import java.util.HashSet;
+import java.util.Objects;
 
 /**
  *
@@ -45,8 +46,44 @@ public class TransicionAFND {
         return simbolo;
     }
     
+    @Override
     public String toString()
     {
         return ("\nf("+origen+", "+ simbolo+") -> "+destinos);
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 71 * hash + Objects.hashCode(this.origen);
+        hash = 71 * hash + Objects.hashCode(this.destinos);
+        hash = 71 * hash + this.simbolo;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final TransicionAFND other = (TransicionAFND) obj;
+        if (this.simbolo != other.simbolo) {
+            return false;
+        }
+        if (!Objects.equals(this.origen, other.origen)) {
+            return false;
+        }
+        if (!Objects.equals(this.destinos, other.destinos)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

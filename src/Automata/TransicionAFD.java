@@ -16,6 +16,8 @@
  */
 package Automata;
 
+import java.util.Objects;
+
 /**
  *
  * @author usuario
@@ -47,6 +49,41 @@ public class TransicionAFD {
     public String toString() {
         return ("f(" +this.estadoO + "," + this.simbolo + ") --> " + this.estadoD);
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.estadoO);
+        hash = 97 * hash + Objects.hashCode(this.estadoD);
+        hash = 97 * hash + this.simbolo;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final TransicionAFD other = (TransicionAFD) obj;
+        if (this.simbolo != other.simbolo) {
+            return false;
+        }
+        if (!Objects.equals(this.estadoO, other.estadoO)) {
+            return false;
+        }
+        if (!Objects.equals(this.estadoD, other.estadoD)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
     
     
 }

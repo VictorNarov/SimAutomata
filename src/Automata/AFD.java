@@ -68,6 +68,27 @@ public class AFD implements Cloneable, Proceso {
         return this.estadosFinales.contains(estado);
     }
     
+    public void eliminarSimbolo(char s) //Elimina las transiciones que usan ese simbolo
+    {
+        for(TransicionAFD t : this.transiciones)
+            if(t.getSimbolo()==s)
+                this.transiciones.remove(t);
+    }
+            
+    public void eliminarEstado(String e) //Eliminar las  transiciones que usan ese estado
+    {
+        HashSet<TransicionAFD> eliminar = new HashSet(); 
+        for(TransicionAFD t : this.transiciones)
+            if(t.getEstadoO().equals(e) || t.getEstadoD().equals(e))
+                eliminar.add(t);
+        
+        this.transiciones.removeAll(eliminar);
+    }
+    
+    public void eliminarTransicion(TransicionAFD t)
+    {
+        this.transiciones.remove(t);
+    }
     @Override
     public boolean reconocer(String cadena) {
         char[] simbolo = cadena.toCharArray();
@@ -106,9 +127,6 @@ public class AFD implements Cloneable, Proceso {
         return mensaje;
     }
     
-    public static AFD pedir() {
-        return null;
-    }
     
     public static void main(String[] args) {
         AFD automata = new AFD();

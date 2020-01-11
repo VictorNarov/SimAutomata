@@ -41,7 +41,7 @@ public class AFND {
     public void setEstadoInicial(String estadoInicial) {
         this.estadoInicial = estadoInicial;
     }
-    
+
     public void setEstadosFinales(HashSet<String> estadosFinales) {
         this.estadosFinales = estadosFinales;
     }
@@ -57,7 +57,7 @@ public class AFND {
     public void agregarTransicion(String e1, char simbolo, HashSet e2) {
         this.transiciones.add(new TransicionAFND(e1, e2, simbolo));
     }
-    
+
     public void agregarTransicion(TransicionAFND trans) {
         this.transiciones.add(trans);
     }
@@ -65,7 +65,7 @@ public class AFND {
     public void agregarTransicionL(String e1, HashSet e2) {
         this.transicionesL.add(new TransicionL(e1, e2));
     }
-    
+
     public void agregarTransicionL(TransicionL trans) {
         this.transicionesL.add(trans);
     }
@@ -174,33 +174,85 @@ public class AFND {
 
         return esFinal(estado);
     }
+
+    public void eliminarSimbolo(char s) {
+        for (TransicionAFND t : this.transiciones) {
+            if (t.getSimbolo() == s) {
+                this.transiciones.remove(t);
+            }
+        }
+    }
+
+    public void eliminarEstado(String e) //Eliminar las  transiciones que usan ese estado
+    {
+        //Elimina las transiciones con origen e
+        HashSet<TransicionAFND> eliminar = new HashSet();
+        for (TransicionAFND t : this.transiciones) {
+            if (t.getOrigen().equals(e)) {
+                eliminar.add(t); //Eliminar transicion
+            }
+            //Elimina las ocurrencias en los destinos de la transicion
+            HashSet<String> eliminarDestino = new HashSet();
+            for (String estado : t.getDestinos()) {
+                if (estado.equals(e)) {
+                    eliminarDestino.add(e); //Eliminar estado del destino
+                }
+            }
+            t.getDestinos().removeAll(eliminarDestino);
+        }
+        this.transiciones.removeAll(eliminar);
+
+        //Elimina las transiciones L con origen e
+        HashSet<TransicionL> eliminarTL = new HashSet();
+        for (TransicionL t : this.transicionesL) {
+            if (t.getOrigen().equals(e)) {
+                eliminarTL.add(t);
+            }
+
+            //Elimina las ocurrencias en los destinos de la transicion L
+            HashSet<String> eliminarDestinoL = new HashSet();
+            for (String estado : t.getDestinos()) {
+                if (estado.equals(e)) {
+                    eliminarDestinoL.add(e); //Eliminar estado del destino
+                }
+            }
+            t.getDestinos().removeAll(eliminarDestinoL);
+        }
+        this.transicionesL.removeAll(eliminarTL);
+    }
+
+    public void eliminarTransicion(TransicionAFND t)
+    {
+        this.transiciones.remove(t);
+    }
     
-        @Override
+    public void eliminarTransicionL(TransicionL t)
+    {
+        this.transicionesL.remove(t);
+    }
+    @Override
     public String toString() {
-        String mensaje="";
+        String mensaje = "";
         HashSet<String> estados = new HashSet();
-        
-        mensaje+="ESTADOS\n";
-        
-        for(TransicionAFND t : this.transiciones)
-        {
+
+        mensaje += "ESTADOS\n";
+
+        for (TransicionAFND t : this.transiciones) {
             estados.add(t.getOrigen());
             //estados.add(t.());
         }
-        
-        for(String e : estados)
-        {
+
+        for (String e : estados) {
             mensaje += e + "\n";
         }
-        
-        mensaje+="\nTRANSICIONES:\n";
-        for(TransicionAFND t : this.transiciones) {
+
+        mensaje += "\nTRANSICIONES:\n";
+        for (TransicionAFND t : this.transiciones) {
             mensaje += t + "\n";
         }
-        
+
         return mensaje;
     }
-
 
     public static void main(String[] args) {
         AFND automata = new AFND();
@@ -267,7 +319,7 @@ public class AFND {
                 add("q3");
             }
         });
-                
+
         if (automata.reconocer("aa")) {
             System.out.println("RECONOCIDA");
         } else {

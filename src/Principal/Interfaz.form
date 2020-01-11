@@ -56,6 +56,8 @@
                                       <Component id="textSimbolo" min="-2" pref="59" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="botonAddSimbolo" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="botonEliminarSimbolo" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace pref="71" max="32767" attributes="0"/>
@@ -79,7 +81,7 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="comboOrigen" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="comboDestino" min="-2" pref="79" max="-2" attributes="0"/>
+                                      <Component id="comboSimbolo" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -89,15 +91,16 @@
                                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Component id="labelEstadoI" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="comboSimbolo" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="botonAddT" min="-2" max="-2" attributes="0"/>
-                                  </Group>
                                   <Group type="102" attributes="0">
                                       <Component id="jButton2" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                      <Component id="comboDestino" min="-2" pref="79" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="botonAddT" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -113,9 +116,11 @@
                               <Component id="textEstado" min="-2" pref="59" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="botonAddEstado" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="botonEliminarEstado" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="285" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <Group type="103" groupAlignment="1" attributes="0">
@@ -154,6 +159,7 @@
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="textSimbolo" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="botonAddSimbolo" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="botonEliminarSimbolo" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" attributes="0">
@@ -174,6 +180,7 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="botonAddEstado" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="textEstado" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="botonEliminarEstado" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
@@ -248,7 +255,7 @@
                 <Column editable="false" title="ESTADO" type="java.lang.Object"/>
               </Table>
             </Property>
-            <Property name="cellSelectionEnabled" type="boolean" value="true"/>
+            <Property name="autoResizeMode" type="int" value="4"/>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
               <TableColumnModel selectionModel="0">
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
@@ -260,6 +267,7 @@
             </Property>
             <Property name="name" type="java.lang.String" value="Tabla de Transiciones" noResource="true"/>
             <Property name="rowHeight" type="int" value="30"/>
+            <Property name="rowSelectionAllowed" type="boolean" value="true"/>
             <Property name="selectionMode" type="int" value="2"/>
             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
               <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
@@ -526,13 +534,16 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel10">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Eliminar filas seleccionadas"/>
+        <Property name="text" type="java.lang.String" value="Eliminar transiciones seleccionadas"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="jButton1">
       <Properties>
         <Property name="text" type="java.lang.String" value="Eliminar"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton2">
       <Properties>
@@ -548,6 +559,28 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Estados finales:  "/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="botonEliminarSimbolo">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Rockwell" size="14" style="0"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Eliminar"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botonEliminarSimboloActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="botonEliminarEstado">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Rockwell" size="14" style="0"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Eliminar"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botonEliminarEstadoActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

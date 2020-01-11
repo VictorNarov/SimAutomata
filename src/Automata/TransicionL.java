@@ -17,6 +17,7 @@
 package Automata;
 
 import java.util.HashSet;
+import java.util.Objects;
 
 /**
  *
@@ -39,9 +40,40 @@ public class TransicionL {
         return destinos;
     }
     
+    @Override
     public String toString()
     {
         return ("f("+origen+", L) -> "+destinos +"\n");
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + Objects.hashCode(this.origen);
+        hash = 59 * hash + Objects.hashCode(this.destinos);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final TransicionL other = (TransicionL) obj;
+        if (!Objects.equals(this.origen, other.origen)) {
+            return false;
+        }
+        if (!Objects.equals(this.destinos, other.destinos)) {
+            return false;
+        }
+        return true;
+    }
+    
     
 }

@@ -18,6 +18,7 @@ package Principal;
 
 import Automata.AFND;
 import Automata.AFD;
+import Automata.TransicionAFD;
 import java.awt.Frame;
 import java.util.HashSet;
 import javax.swing.JList;
@@ -28,10 +29,10 @@ import javax.swing.table.DefaultTableModel;
  * @author victo
  */
 public class Interfaz extends javax.swing.JFrame {
-
+    
     private AFD afd = new AFD();
     private AFND afnd = new AFND();
-
+    
     private HashSet<String> cjtoEstados = new HashSet();
     private HashSet<String> cjtoSimbolos = new HashSet();
     private DefaultTableModel modeloTT;
@@ -47,17 +48,17 @@ public class Interfaz extends javax.swing.JFrame {
                 return false;
             }
         };
-
+        
         tablaTransicion.setModel(modeloTT);
-
+        
     }
-
+    
     private void vaciarTabla() {
         while (modeloTT.getRowCount() > 0) {
             modeloTT.removeRow(0);
         }
     }
-
+    
     public void actualizarTabla() {
         vaciarTabla();
         Object[] simbolos = cjtoSimbolos.toArray();
@@ -67,24 +68,24 @@ public class Interfaz extends javax.swing.JFrame {
             columna[i + 1] = simbolos[i];
         }
         modeloTT.setColumnIdentifiers(columna);
-
+        
         columna = new Object[cjtoSimbolos.size() + 1];
-
+        
         for (String e : cjtoEstados) //Por cada estado
         {
             columna[0] = e;
-
+            
             for (int j = 0; j < cjtoSimbolos.size(); j++) { //Rellena cada columna segun el simbolo de entrada 
                 if (tipoAFD.isSelected()) {
                     columna[j + 1] = afd.getTransicion(e, (tablaTransicion.getColumnName(j + 1)).charAt(0));  //Obteniendo la transicion del AFD
                 } else {
                 }
-
+                
             }
             modeloTT.addRow(columna);
-
+            
         }
-
+        
     }
 
     /**
@@ -128,6 +129,8 @@ public class Interfaz extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         labelEstadoI = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
+        botonEliminarSimbolo = new javax.swing.JButton();
+        botonEliminarEstado = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SimAutomata - Víctor Roríguez y Fran Beltrán ");
@@ -156,9 +159,10 @@ public class Interfaz extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        tablaTransicion.setCellSelectionEnabled(true);
+        tablaTransicion.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tablaTransicion.setName("Tabla de Transiciones"); // NOI18N
         tablaTransicion.setRowHeight(30);
+        tablaTransicion.setRowSelectionAllowed(true);
         tablaTransicion.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         jScrollPane1.setViewportView(tablaTransicion);
         if (tablaTransicion.getColumnModel().getColumnCount() > 0) {
@@ -287,15 +291,36 @@ public class Interfaz extends javax.swing.JFrame {
         botonCargar.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
         botonCargar.setText("Cargar");
 
-        jLabel10.setText("Eliminar filas seleccionadas");
+        jLabel10.setText("Eliminar transiciones seleccionadas");
 
         jButton1.setText("Eliminar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Estados");
 
         labelEstadoI.setText("Estado incial: ");
 
         jLabel12.setText("Estados finales:  ");
+
+        botonEliminarSimbolo.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
+        botonEliminarSimbolo.setText("Eliminar");
+        botonEliminarSimbolo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonEliminarSimboloActionPerformed(evt);
+            }
+        });
+
+        botonEliminarEstado.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
+        botonEliminarEstado.setText("Eliminar");
+        botonEliminarEstado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonEliminarEstadoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -325,7 +350,9 @@ public class Interfaz extends javax.swing.JFrame {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(textSimbolo, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(botonAddSimbolo)))
+                                        .addComponent(botonAddSimbolo)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(botonEliminarSimbolo)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 71, Short.MAX_VALUE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(layout.createSequentialGroup()
@@ -343,7 +370,7 @@ public class Interfaz extends javax.swing.JFrame {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(comboOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(comboDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(comboSimbolo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
@@ -351,13 +378,14 @@ public class Interfaz extends javax.swing.JFrame {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(labelEstadoI))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(comboSimbolo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(botonAddT))
-                                    .addGroup(layout.createSequentialGroup()
                                         .addComponent(jButton2)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel12)))
+                                        .addComponent(jLabel12))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(1, 1, 1)
+                                        .addComponent(comboDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(botonAddT)))
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
@@ -367,8 +395,10 @@ public class Interfaz extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(textEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(botonAddEstado)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(botonAddEstado)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botonEliminarEstado)))
+                        .addContainerGap(285, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
@@ -397,7 +427,8 @@ public class Interfaz extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(textSimbolo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(botonAddSimbolo)))
+                                    .addComponent(botonAddSimbolo)
+                                    .addComponent(botonEliminarSimbolo)))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel5)
@@ -411,7 +442,8 @@ public class Interfaz extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(botonAddEstado)
-                            .addComponent(textEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(textEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(botonEliminarEstado))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -482,16 +514,18 @@ public class Interfaz extends javax.swing.JFrame {
         comboOrigen.addItem(textEstado.getText());
         comboDestino.addItem(textEstado.getText());
         comboEstadoI.addItem(textEstado.getText());
-
+        
         actualizarTabla();
     }//GEN-LAST:event_botonAddEstadoActionPerformed
 
     private void tipoAFDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoAFDActionPerformed
         this.afd = new AFD(); //Reseteamos el AFD
+        actualizarTabla();
     }//GEN-LAST:event_tipoAFDActionPerformed
 
     private void tipoAFNDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoAFNDActionPerformed
-        //this.afnd = new AFND(); //Reseteamos el AFD
+        this.afnd = new AFND(); //Reseteamos el AFD
+        actualizarTabla();
     }//GEN-LAST:event_tipoAFNDActionPerformed
 
     private void botonAddSimboloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAddSimboloActionPerformed
@@ -512,11 +546,57 @@ public class Interfaz extends javax.swing.JFrame {
             Frame ventana = new Frame();
             ventana.setSize(100, 300);
             ventana.add(listaDestinos);
-
+            
             ventana.setVisible(true);
         }
         actualizarTabla();
     }//GEN-LAST:event_botonAddTActionPerformed
+
+    private void botonEliminarSimboloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminarSimboloActionPerformed
+        this.cjtoSimbolos.remove(textSimbolo.getText());
+        comboSimbolo.removeItem(textSimbolo.getText());
+        
+        if (tipoAFD.isSelected()) {
+            afd.eliminarSimbolo(textSimbolo.getText().charAt(0)); //Elimina las transiciones que usan el simbolo
+        } else {
+            afnd.eliminarSimbolo(textSimbolo.getText().charAt(0));
+        }
+        actualizarTabla();
+    }//GEN-LAST:event_botonEliminarSimboloActionPerformed
+
+    private void botonEliminarEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminarEstadoActionPerformed
+        String estado = textEstado.getText();
+        this.cjtoEstados.remove(estado);
+        comboEstadoI.removeItem(estado);
+        comboOrigen.removeItem(estado);
+        
+        if (tipoAFD.isSelected()) {
+            comboDestino.removeItem(estado);
+            afd.eliminarEstado(estado);
+        } else {
+            afnd.eliminarEstado(estado);
+        }
+        actualizarTabla();
+    }//GEN-LAST:event_botonEliminarEstadoActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (tipoAFD.isSelected()) {
+            for (int i : tablaTransicion.getSelectedRows()) {
+                System.out.println("Eliminando fila: "+i);
+                String origen = modeloTT.getValueAt(i, 0).toString();
+                String destino = modeloTT.getValueAt(i, 1).toString();
+                
+                for (int j = 1; j <= modeloTT.getColumnCount()-1; j++) {//Por cada simbolo
+                    TransicionAFD t = new TransicionAFD(origen, modeloTT.getColumnName(j).charAt(0), destino);
+                    System.out.println("Eliminar transicion "+t);
+                    afd.eliminarTransicion(t); //Borramos la transicion 
+                }
+                
+            }
+        }
+        
+        actualizarTabla();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -561,6 +641,8 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JButton botonAddSimbolo;
     private javax.swing.JButton botonAddT;
     private javax.swing.JButton botonCargar;
+    private javax.swing.JButton botonEliminarEstado;
+    private javax.swing.JButton botonEliminarSimbolo;
     private javax.swing.JButton botonSimular;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> comboDestino;
