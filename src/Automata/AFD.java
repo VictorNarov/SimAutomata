@@ -1,5 +1,6 @@
-package Principal;
-import Transiciones.TransicionAFD;
+package Automata;
+import Automata.TransicionAFD;
+import Principal.Proceso;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -8,39 +9,43 @@ import java.util.HashSet;
  * @author usuario
  */
 public class AFD implements Cloneable, Proceso {
-    public ArrayList<Integer> estadosFinales;
-    private ArrayList<TransicionAFD> transiciones;
+    public HashSet<String> estadosFinales;
+    private HashSet<TransicionAFD> transiciones;
     
     public AFD() {
-        this.transiciones = new ArrayList();
-        this.estadosFinales = new ArrayList();
+        this.transiciones = new HashSet();
+        this.estadosFinales = new HashSet();
     }
     
-    public void agregarTransicion(int e1, char simbolo, int e2) {
+    public void agregarTransicion(String e1, char simbolo, String e2) {
         this.transiciones.add(new TransicionAFD(e1, simbolo, e2));
     }
     
-    public int transicion(int estado, char simbolo) {
+    public void agregarTransicion(TransicionAFD trans) {
+        this.transiciones.add(trans);
+    }
+    
+    public String getTransicion(String estado, char simbolo) {
         for(TransicionAFD t : this.transiciones) {
-            if(t.getEstadoO() == estado && t.getSimbolo() == simbolo)
+            if(t.getEstadoO().equals(estado) && t.getSimbolo() == simbolo)
                 return t.getEstadoD();
         }
         
-        return -1;
+        return "";
     }
     
     @Override
-    public boolean esFinal(int estado) {
+    public boolean esFinal(String estado) {
         return this.estadosFinales.contains(estado);
     }
     
     @Override
     public boolean reconocer(String cadena) {
         char[] simbolo = cadena.toCharArray();
-        int estado=0;
+        String estado="q0";
         
         for (int i = 0; i < simbolo.length; i++) {
-            estado = transicion(estado,simbolo[i]);
+            estado = getTransicion(estado,simbolo[i]);
         }
         
         return esFinal(estado);
@@ -49,7 +54,7 @@ public class AFD implements Cloneable, Proceso {
     @Override
     public String toString() {
         String mensaje="";
-        HashSet<Integer> estados = new HashSet();
+        HashSet<String> estados = new HashSet();
         
         mensaje+="ESTADOS\n";
         
@@ -59,9 +64,9 @@ public class AFD implements Cloneable, Proceso {
             estados.add(t.getEstadoD());
         }
         
-        for(int e : estados)
+        for(String e : estados)
         {
-            mensaje += "q" + e + "\n";
+            mensaje += e + "\n";
         }
         
         mensaje+="\nTRANSICIONES:\n";
@@ -79,14 +84,14 @@ public class AFD implements Cloneable, Proceso {
     public static void main(String[] args) {
         AFD automata = new AFD();
         
-        automata.estadosFinales.add(1);
+        automata.estadosFinales.add("q1");
         
-        automata.agregarTransicion(0, '1', 0);
-        automata.agregarTransicion(0, '0', 2);
-        automata.agregarTransicion(2, '0', 2);
-        automata.agregarTransicion(2, '1', 1);
-        automata.agregarTransicion(1, '0', 1);
-        automata.agregarTransicion(1, '1', 1);
+        automata.agregarTransicion("q0", '1', "q0");
+        automata.agregarTransicion("q0", '0', "q2");
+        automata.agregarTransicion("q2", '0', "q2");
+        automata.agregarTransicion("q2", '1', "q1");
+        automata.agregarTransicion("q1", '0', "q1");
+        automata.agregarTransicion("q1", '1', "q1");
         
         System.out.println(automata);
         

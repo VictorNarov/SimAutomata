@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Transiciones;
+package Automata;
 
 import java.util.HashSet;
 
@@ -12,19 +12,19 @@ import java.util.HashSet;
  * @author usuario
  */
 public class TransicionL {
-    private int origen;
-    private HashSet<Integer> destinos;
+    private String origen;
+    private HashSet<String> destinos;
 
-    public TransicionL(int origen, HashSet<Integer> destinos) {
+    public TransicionL(String origen, HashSet<String> destinos) {
         this.origen = origen;
         this.destinos = destinos;
     }
 
-    public int getOrigen() {
+    public String getOrigen() {
         return origen;
     }
 
-    public HashSet<Integer> getDestinos() {
+    public HashSet<String> getDestinos() {
         return destinos;
     }
     
