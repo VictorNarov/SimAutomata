@@ -20,8 +20,13 @@ import Automata.AFND;
 import Automata.AFD;
 import Automata.TransicionAFD;
 import java.awt.Frame;
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashSet;
+import javax.swing.JFileChooser;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -29,10 +34,10 @@ import javax.swing.table.DefaultTableModel;
  * @author victo
  */
 public class Interfaz extends javax.swing.JFrame {
-    
+
     private AFD afd = new AFD();
     private AFND afnd = new AFND();
-    
+
     private HashSet<String> cjtoEstados = new HashSet();
     private HashSet<String> cjtoSimbolos = new HashSet();
     private DefaultTableModel modeloTT;
@@ -48,44 +53,50 @@ public class Interfaz extends javax.swing.JFrame {
                 return false;
             }
         };
-        
+
         tablaTransicion.setModel(modeloTT);
-        
+
     }
-    
+
     private void vaciarTabla() {
         while (modeloTT.getRowCount() > 0) {
             modeloTT.removeRow(0);
         }
     }
-    
+
     public void actualizarTabla() {
         vaciarTabla();
         Object[] simbolos = cjtoSimbolos.toArray();
         Object[] columna = new Object[cjtoSimbolos.size() + 1];
+        
+        //System.out.println("ESTOY PILLANDO "+Arrays.toString(simbolos));
         columna[0] = "ESTADOS";
         for (int i = 0; i < cjtoSimbolos.size(); i++) {
             columna[i + 1] = simbolos[i];
+            //System.out.println("ESTOY PILLANDO "+Arrays.toString(columna));
         }
         modeloTT.setColumnIdentifiers(columna);
-        
+
         columna = new Object[cjtoSimbolos.size() + 1];
-        
-        for (String e : cjtoEstados) //Por cada estado
+
+        for (String e : cjtoEstados) // Por cada estado
         {
             columna[0] = e;
-            
-            for (int j = 0; j < cjtoSimbolos.size(); j++) { //Rellena cada columna segun el simbolo de entrada 
+
+            for (int j = 0; j < cjtoSimbolos.size(); j++) { // Rellena cada columna segun el simbolo de entrada 
                 if (tipoAFD.isSelected()) {
-                    columna[j + 1] = afd.getTransicion(e, (tablaTransicion.getColumnName(j + 1)).charAt(0));  //Obteniendo la transicion del AFD
-                } else {
+                    //System.out.println("VOY A VER SI EXISTE LA T: "+e+", "+ (tablaTransicion.getColumnName(j + 1)).charAt(0));
+                    columna[j + 1] = afd.getTransicion(e, (tablaTransicion.getColumnName(j + 1)).charAt(0));  // Obteniendo la transicion del AFD
+                    System.out.println("AÑADIDA TRANSICION:" +afd.getTransicion(e, (tablaTransicion.getColumnName(j + 1)).charAt(0)));
+                } else { //TODO
+                    columna[j + 1] = afnd.getTransicion(e, (tablaTransicion.getColumnName(j + 1)).charAt(0));
                 }
-                
+
             }
             modeloTT.addRow(columna);
-            
         }
         
+
     }
 
     /**
@@ -162,7 +173,6 @@ public class Interfaz extends javax.swing.JFrame {
         tablaTransicion.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tablaTransicion.setName("Tabla de Transiciones"); // NOI18N
         tablaTransicion.setRowHeight(30);
-        tablaTransicion.setRowSelectionAllowed(true);
         tablaTransicion.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         jScrollPane1.setViewportView(tablaTransicion);
         if (tablaTransicion.getColumnModel().getColumnCount() > 0) {
@@ -211,19 +221,9 @@ public class Interfaz extends javax.swing.JFrame {
 
         comboOrigen.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
         comboOrigen.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Origen" }));
-        comboOrigen.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboOrigenActionPerformed(evt);
-            }
-        });
 
         comboDestino.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
         comboDestino.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Destino" }));
-        comboDestino.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboDestinoActionPerformed(evt);
-            }
-        });
 
         botonAddSimbolo.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
         botonAddSimbolo.setText("Añadir");
@@ -257,11 +257,6 @@ public class Interfaz extends javax.swing.JFrame {
 
         comboSimbolo.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
         comboSimbolo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Símbolo" }));
-        comboSimbolo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboSimboloActionPerformed(evt);
-            }
-        });
 
         buttonGroup1.add(tipoAFD);
         tipoAFD.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
@@ -290,6 +285,11 @@ public class Interfaz extends javax.swing.JFrame {
 
         botonCargar.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
         botonCargar.setText("Cargar");
+        botonCargar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonCargarActionPerformed(evt);
+            }
+        });
 
         jLabel10.setText("Eliminar transiciones seleccionadas");
 
@@ -488,14 +488,6 @@ public class Interfaz extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_textSimboloActionPerformed
 
-    private void comboOrigenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboOrigenActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboOrigenActionPerformed
-
-    private void comboDestinoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboDestinoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboDestinoActionPerformed
-
     private void comboEstadoIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboEstadoIActionPerformed
         if (tipoAFD.isSelected()) {
             afd.setEstadoInicial(comboEstadoI.getSelectedItem().toString());
@@ -505,16 +497,12 @@ public class Interfaz extends javax.swing.JFrame {
         labelEstadoI.setText("Estado inicial: " + comboEstadoI.getSelectedItem().toString());
     }//GEN-LAST:event_comboEstadoIActionPerformed
 
-    private void comboSimboloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboSimboloActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_comboSimboloActionPerformed
-
     private void botonAddEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAddEstadoActionPerformed
         cjtoEstados.add(textEstado.getText());
         comboOrigen.addItem(textEstado.getText());
         comboDestino.addItem(textEstado.getText());
         comboEstadoI.addItem(textEstado.getText());
-        
+
         actualizarTabla();
     }//GEN-LAST:event_botonAddEstadoActionPerformed
 
@@ -524,7 +512,7 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_tipoAFDActionPerformed
 
     private void tipoAFNDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoAFNDActionPerformed
-        this.afnd = new AFND(); //Reseteamos el AFD
+        this.afnd = new AFND(); //Reseteamos el AFND
         actualizarTabla();
     }//GEN-LAST:event_tipoAFNDActionPerformed
 
@@ -546,7 +534,7 @@ public class Interfaz extends javax.swing.JFrame {
             Frame ventana = new Frame();
             ventana.setSize(100, 300);
             ventana.add(listaDestinos);
-            
+
             ventana.setVisible(true);
         }
         actualizarTabla();
@@ -555,7 +543,7 @@ public class Interfaz extends javax.swing.JFrame {
     private void botonEliminarSimboloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminarSimboloActionPerformed
         this.cjtoSimbolos.remove(textSimbolo.getText());
         comboSimbolo.removeItem(textSimbolo.getText());
-        
+
         if (tipoAFD.isSelected()) {
             afd.eliminarSimbolo(textSimbolo.getText().charAt(0)); //Elimina las transiciones que usan el simbolo
         } else {
@@ -569,7 +557,7 @@ public class Interfaz extends javax.swing.JFrame {
         this.cjtoEstados.remove(estado);
         comboEstadoI.removeItem(estado);
         comboOrigen.removeItem(estado);
-        
+
         if (tipoAFD.isSelected()) {
             comboDestino.removeItem(estado);
             afd.eliminarEstado(estado);
@@ -582,21 +570,65 @@ public class Interfaz extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (tipoAFD.isSelected()) {
             for (int i : tablaTransicion.getSelectedRows()) {
-                System.out.println("Eliminando fila: "+i);
+                System.out.println("Eliminando fila: " + i);
                 String origen = modeloTT.getValueAt(i, 0).toString();
                 String destino = modeloTT.getValueAt(i, 1).toString();
-                
-                for (int j = 1; j <= modeloTT.getColumnCount()-1; j++) {//Por cada simbolo
+
+                for (int j = 1; j <= modeloTT.getColumnCount() - 1; j++) {//Por cada simbolo
                     TransicionAFD t = new TransicionAFD(origen, modeloTT.getColumnName(j).charAt(0), destino);
-                    System.out.println("Eliminar transicion "+t);
+                    System.out.println("Eliminar transicion " + t);
                     afd.eliminarTransicion(t); //Borramos la transicion 
                 }
-                
+
             }
         }
-        
+
         actualizarTabla();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void botonCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCargarActionPerformed
+        // TODO add your handling code here:
+        JFileChooser selectorArchivos = new JFileChooser();
+        String currentPath = Paths.get("./src/Ficheros").toAbsolutePath().normalize().toString();
+        selectorArchivos.setCurrentDirectory(new File(currentPath));
+
+        selectorArchivos.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+        int resultado = selectorArchivos.showOpenDialog(this);
+
+        if (resultado == JFileChooser.APPROVE_OPTION) {
+            File archivo = selectorArchivos.getSelectedFile();
+
+            if ((archivo == null) || (archivo.getName().equals(""))) {
+                JOptionPane.showMessageDialog(this, "Error al cargar fichero", "Nombre de archivo inválido", JOptionPane.ERROR_MESSAGE);
+            }
+
+            try {
+                Fichero datos = new Fichero(archivo.getAbsolutePath());
+
+                if (tipoAFD.isSelected()) {
+                    datos.procesarAFD();
+                    this.afd = datos.generarAutomataAFD();
+                } else {
+                    datos.procesarAFND();
+                    this.afnd = datos.generarAutomataAFND();
+                }
+                System.out.println(afd);
+
+                this.cjtoEstados = new HashSet<String>();
+                this.cjtoEstados.addAll(datos.getConjuntoEstados());
+                this.cjtoSimbolos = new HashSet<String>();
+                this.cjtoSimbolos.addAll(datos.getConjuntoSimbolos());
+                
+                System.out.println("ESTADOS  \n"+cjtoEstados);
+                System.out.println("SIMBOLOS \n"+cjtoSimbolos);
+                this.actualizarTabla();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error al cargar fichero", ex.getMessage(), JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+    }//GEN-LAST:event_botonCargarActionPerformed
 
     /**
      * @param args the command line arguments

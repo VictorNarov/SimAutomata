@@ -74,7 +74,7 @@ public class AFND {
         return estadoInicial;
     }
 
-    private HashSet<String> getTransicion(String estado, char simbolo) {
+    public HashSet<String> getTransicion(String estado, char simbolo) {
         for (TransicionAFND t : this.transiciones) {
             if (t.getOrigen().equals(estado) && t.getSimbolo() == simbolo) {
                 return t.getDestinos();
