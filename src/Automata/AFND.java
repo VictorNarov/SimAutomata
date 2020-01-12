@@ -230,25 +230,30 @@ public class AFND {
     {
         this.transicionesL.remove(t);
     }
+    
     @Override
     public String toString() {
         String mensaje = "";
         HashSet<String> estados = new HashSet();
 
-        mensaje += "ESTADOS\n";
+        mensaje += "\nESTADOS:\n";
 
         for (TransicionAFND t : this.transiciones) {
             estados.add(t.getOrigen());
-            //estados.add(t.());
         }
 
         for (String e : estados) {
             mensaje += e + "\n";
         }
 
-        mensaje += "\nTRANSICIONES:\n";
+        mensaje += "\nTRANSICIONES:";
         for (TransicionAFND t : this.transiciones) {
-            mensaje += t + "\n";
+            mensaje += t;
+        }
+        
+        mensaje += "\n\nTRANSICIONES_L:";
+        for (TransicionL t : this.transicionesL) {
+            mensaje += t;
         }
 
         return mensaje;

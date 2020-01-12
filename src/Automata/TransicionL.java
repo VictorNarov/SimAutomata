@@ -43,7 +43,7 @@ public class TransicionL {
     @Override
     public String toString()
     {
-        return ("f("+origen+", L) -> "+destinos +"\n");
+        return ("\nf(" + origen +", L) -> " + destinos);
     }
 
     @Override

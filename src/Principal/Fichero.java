@@ -31,7 +31,7 @@ import java.util.Scanner;
 
 /**
  *
- * @author VSPC-Infernov4
+ * @author FranBeltrán
  */
 public class Fichero {
 
@@ -122,7 +122,6 @@ public class Fichero {
             }
 
             linea = scanner.nextLine();
-            linea = scanner.nextLine();
 
             while (scanner.hasNextLine() && !linea.equals("FIN")) {
                 transiciones_L.add(procesarLineaL(linea));
@@ -133,7 +132,7 @@ public class Fichero {
 
     public TransicionAFD procesarLineaAFD(String contenido) {
         String valores[] = contenido.split(" ");
-        
+
         this.conjuntoSimbolos.add(valores[2]);
         TransicionAFD temp = new TransicionAFD(valores[1], valores[2].charAt(1), valores[3]);
 
@@ -144,34 +143,33 @@ public class Fichero {
         String valores[] = contenido.split(" ");
 
         this.conjuntoSimbolos.add(valores[2]);
-        
+
         HashSet<String> destinos = new HashSet();
-        
+
         for (int i = 3; i < valores.length; i++) {
             destinos.add(valores[i]);
         }
-        
+
         TransicionAFND temp = new TransicionAFND(valores[1], destinos, valores[2].charAt(1));
 
         return temp;
-
     }
-    
+
     public TransicionL procesarLineaL(String contenido) {
         String valores[] = contenido.split(" ");
-        
-        this.conjuntoEstados.add(valores[2]);
-        
+
+        this.conjuntoEstados.add(valores[1]);
+
         HashSet<String> destinos = new HashSet();
-        
-        for (int i = 3; i < valores.length; i++) {
+
+        for (int i = 2; i < valores.length; i++) {
             destinos.add(valores[i]);
         }
-        
+
         TransicionL temp = new TransicionL(valores[1], destinos);
 
         return temp;
-                
+
     }
 
     public AFD generarAutomataAFD() {
@@ -183,14 +181,14 @@ public class Fichero {
 
         return temp;
     }
-    
+
     public AFND generarAutomataAFND() {
         AFND temp = new AFND();
-        
+
         for (TransicionAFND valor : this.transiciones_AFND) {
             temp.agregarTransicion(valor);
         }
-        
+
         for (TransicionL valor : this.transiciones_L) {
             temp.agregarTransicionL(valor);
         }
@@ -208,8 +206,12 @@ public class Fichero {
 
     public static void main(String[] args) throws IOException {
         Fichero temp = new Fichero("D://2.txt");
+        Fichero temp2 = new Fichero("D://1.txt");
 
         temp.procesarAFND();
         System.out.println(temp.generarAutomataAFND());
+
+//        temp2.procesarAFD();
+//        System.out.println(temp2.generarAutomataAFD());
     }
 }
