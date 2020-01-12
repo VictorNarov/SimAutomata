@@ -26,6 +26,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
 
@@ -130,19 +131,21 @@ public class Fichero {
         }
     }
 
-    public TransicionAFD procesarLineaAFD(String contenido) {
+    private TransicionAFD procesarLineaAFD(String contenido) {
         String valores[] = contenido.split(" ");
 
-        this.conjuntoSimbolos.add(valores[2]);
+        this.conjuntoSimbolos.add(valores[2].split("'")[1]); //Separar las comillas simples
+
         TransicionAFD temp = new TransicionAFD(valores[1], valores[2].charAt(1), valores[3]);
 
         return temp;
     }
 
-    public TransicionAFND procesarLineaAFND(String contenido) {
+    private TransicionAFND procesarLineaAFND(String contenido) {
         String valores[] = contenido.split(" ");
 
-        this.conjuntoSimbolos.add(valores[2]);
+        this.conjuntoSimbolos.add(valores[2].split("'")[1]); //Separar las comillas simples
+        
 
         HashSet<String> destinos = new HashSet();
 
@@ -151,11 +154,11 @@ public class Fichero {
         }
 
         TransicionAFND temp = new TransicionAFND(valores[1], destinos, valores[2].charAt(1));
-
+        System.out.println("LEIDO DE FICHERO T: "+new TransicionAFND(valores[1], destinos, valores[2].charAt(1)));
         return temp;
     }
 
-    public TransicionL procesarLineaL(String contenido) {
+    private TransicionL procesarLineaL(String contenido) {
         String valores[] = contenido.split(" ");
 
         this.conjuntoEstados.add(valores[1]);
