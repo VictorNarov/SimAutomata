@@ -38,7 +38,8 @@ public class Fichero {
 
     private final Path ruta;
     private final static Charset ENCODING = StandardCharsets.UTF_8;
-    private HashSet<String> estado_inicial, estados_finales;
+    private String estado_inicial;
+    private HashSet<String> estados_finales;
     private HashSet<TransicionAFD> transiciones_AFD;
     private HashSet<TransicionAFND> transiciones_AFND;
     private HashSet<TransicionL> transiciones_L;
@@ -46,7 +47,6 @@ public class Fichero {
     private HashSet<String> conjuntoSimbolos = new HashSet();
 
     public Fichero(String nombreFichero) {
-        this.estado_inicial = new HashSet();
         this.estados_finales = new HashSet();
         this.transiciones_AFD = new HashSet();
         this.transiciones_AFND = new HashSet();
@@ -70,7 +70,8 @@ public class Fichero {
             linea = scanner.nextLine();
             valores = linea.split(" ");
 
-            estado_inicial.add(valores[1]);
+            estado_inicial=valores[1];
+            System.out.println("ESTADO INICIAL LEIDO: "+valores[1]);
 
             // Leemos los estados finales
             linea = scanner.nextLine();
@@ -78,6 +79,7 @@ public class Fichero {
 
             for (int i = 1; i < valores.length; i++) {
                 estados_finales.add(valores[i]);
+                System.out.println("ESTADO FINAL LEIDO: "+valores[i]);
             }
 
             linea = scanner.nextLine();
@@ -104,7 +106,8 @@ public class Fichero {
             linea = scanner.nextLine();
             valores = linea.split(" ");
 
-            estado_inicial.add(valores[1]);
+            estado_inicial=valores[1];
+            System.out.println("ESTADO INICIAL LEIDO: "+valores[1]);
 
             // Leemos los estados finales
             linea = scanner.nextLine();
@@ -112,6 +115,7 @@ public class Fichero {
 
             for (int i = 1; i < valores.length; i++) {
                 estados_finales.add(valores[i]);
+                System.out.println("ESTADO FINAL LEIDO: "+valores[i]);
             }
 
             linea = scanner.nextLine();
@@ -162,7 +166,7 @@ public class Fichero {
         String valores[] = contenido.split(" ");
 
         this.conjuntoEstados.add(valores[1]);
-
+        
         HashSet<String> destinos = new HashSet();
 
         for (int i = 2; i < valores.length; i++) {
@@ -181,7 +185,10 @@ public class Fichero {
         for (TransicionAFD valor : this.transiciones_AFD) {
             temp.agregarTransicion(valor);
         }
-
+        
+        temp.setEstadoInicial(estado_inicial);
+        temp.setEstadosFinales(estados_finales);
+        
         return temp;
     }
 
@@ -196,6 +203,9 @@ public class Fichero {
             temp.agregarTransicionL(valor);
         }
 
+        temp.setEstadoInicial(estado_inicial);
+        temp.setEstadosFinales(estados_finales);
+        
         return temp;
     }
 

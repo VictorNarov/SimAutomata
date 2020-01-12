@@ -59,6 +59,14 @@ public class AFD implements Cloneable, Proceso {
         this.estadoInicial = estadoInicial;
     }
 
+    public void setEstadosFinales(HashSet<String> estadosFinales) {
+        this.estadosFinales = estadosFinales;
+    }
+
+    public HashSet<String> getEstadosFinales() {
+        return estadosFinales;
+    }
+    
     public void addEstadoFinal(String estadoFinal) {
         this.estadosFinales.add(estadoFinal);
     }
@@ -112,6 +120,13 @@ public class AFD implements Cloneable, Proceso {
         {
             estados.add(t.getEstadoO());
             estados.add(t.getEstadoD());
+        }
+        
+        mensaje+="ESTADO INICIAL: "+this.estadoInicial+"\n";
+        mensaje+="ESTADOS FINALES: \n";
+        for(String e : estadosFinales)
+        {
+            mensaje+=e;
         }
         
         for(String e : estados)

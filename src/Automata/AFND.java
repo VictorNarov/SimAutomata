@@ -54,6 +54,7 @@ public class AFND {
         this.transicionesL = transicionesL;
     }
 
+    
     public void agregarTransicion(String e1, char simbolo, HashSet e2) {
         this.transiciones.add(new TransicionAFND(e1, e2, simbolo));
     }
@@ -74,6 +75,11 @@ public class AFND {
         return estadoInicial;
     }
 
+    public HashSet<String> getEstadosFinales() {
+        return estadosFinales;
+    }
+
+    
     public HashSet<String> getTransicion(String estado, char simbolo) {
         for (TransicionAFND t : this.transiciones) {
             if (t.getOrigen().equals(estado) && t.getSimbolo() == simbolo) {
@@ -102,7 +108,7 @@ public class AFND {
         return solucion;
     }
 
-    public HashSet<String> transicionL(String estado) {
+    public HashSet<String> getTransicionL(String estado) {
         for (TransicionL sol : this.transicionesL) {
             if (sol.getOrigen().equals(estado)) {
                 return sol.getDestinos();
@@ -245,7 +251,13 @@ public class AFND {
         for (String e : estados) {
             mensaje += e + "\n";
         }
-
+        
+        mensaje+="ESTADO INICIAL: "+this.estadoInicial+"\n";
+        mensaje+="ESTADOS FINALES: \n";
+        for(String e : estadosFinales)
+        {
+            mensaje+=e;
+        }
         mensaje += "\nTRANSICIONES:";
         for (TransicionAFND t : this.transiciones) {
             mensaje += t;
@@ -259,76 +271,76 @@ public class AFND {
         return mensaje;
     }
 
-    public static void main(String[] args) {
-        AFND automata = new AFND();
-
-        automata.setEstadoInicial("q0");
-
-        automata.agregarTransicion("q0", 'a', new HashSet<String>() {
-            {
-                add("q1");
-            }
-        });
-        automata.agregarTransicion("q0", 'b', new HashSet<String>() {
-            {
-                add("q1");
-            }
-        });
-
-        automata.agregarTransicion("q1", 'a', new HashSet<String>() {
-            {
-                add("q2");
-            }
-        });
-        automata.agregarTransicion("q1", 'b', new HashSet<String>() {
-            {
-                add("q1");
-            }
-        });
-
-        automata.agregarTransicion("q2", 'a', new HashSet<String>() {
-            {
-                add("q0");
-            }
-        });
-        automata.agregarTransicion("q2", 'b', new HashSet<String>() {
-            {
-                add("q4");
-            }
-        });
-
-        automata.agregarTransicion("q3", 'a', new HashSet<String>() {
-            {
-                add("q4");
-            }
-        });
-        automata.agregarTransicion("q3", 'b', new HashSet<String>() {
-            {
-                add("q1");
-            }
-        });
-
-        automata.setEstadosFinales(new HashSet<String>() {
-            {
-                add("q4");
-            }
-        });
-
-        automata.agregarTransicionL("q0", new HashSet<String>() {
-            {
-                add("q2");
-            }
-        });
-        automata.agregarTransicionL("q1", new HashSet<String>() {
-            {
-                add("q3");
-            }
-        });
-
-        if (automata.reconocer("aa")) {
-            System.out.println("RECONOCIDA");
-        } else {
-            System.out.println("NO RECONOCIDA");
-        }
-    }
+//    public static void main(String[] args) {
+//        AFND automata = new AFND();
+//
+//        automata.setEstadoInicial("q0");
+//
+//        automata.agregarTransicion("q0", 'a', new HashSet<String>() {
+//            {
+//                add("q1");
+//            }
+//        });
+//        automata.agregarTransicion("q0", 'b', new HashSet<String>() {
+//            {
+//                add("q1");
+//            }
+//        });
+//
+//        automata.agregarTransicion("q1", 'a', new HashSet<String>() {
+//            {
+//                add("q2");
+//            }
+//        });
+//        automata.agregarTransicion("q1", 'b', new HashSet<String>() {
+//            {
+//                add("q1");
+//            }
+//        });
+//
+//        automata.agregarTransicion("q2", 'a', new HashSet<String>() {
+//            {
+//                add("q0");
+//            }
+//        });
+//        automata.agregarTransicion("q2", 'b', new HashSet<String>() {
+//            {
+//                add("q4");
+//            }
+//        });
+//
+//        automata.agregarTransicion("q3", 'a', new HashSet<String>() {
+//            {
+//                add("q4");
+//            }
+//        });
+//        automata.agregarTransicion("q3", 'b', new HashSet<String>() {
+//            {
+//                add("q1");
+//            }
+//        });
+//
+//        automata.setEstadosFinales(new HashSet<String>() {
+//            {
+//                add("q4");
+//            }
+//        });
+//
+//        automata.agregarTransicionL("q0", new HashSet<String>() {
+//            {
+//                add("q2");
+//            }
+//        });
+//        automata.agregarTransicionL("q1", new HashSet<String>() {
+//            {
+//                add("q3");
+//            }
+//        });
+//
+//        if (automata.reconocer("aa")) {
+//            System.out.println("RECONOCIDA");
+//        } else {
+//            System.out.println("NO RECONOCIDA");
+//        }
+//    }
 }
