@@ -54,7 +54,7 @@ public class Interfaz extends javax.swing.JFrame {
                 return false;
             }
         };
-
+        modeloTT.setColumnIdentifiers(new Object[]{"ESTADOS","SIMBOLOS"});
         tablaTransicion.setModel(modeloTT);
 
     }
