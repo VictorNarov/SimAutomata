@@ -16,8 +16,6 @@
  */
 package Automata;
 
-import Automata.TransicionAFND;
-import Automata.TransicionL;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -87,7 +85,7 @@ public class AFND {
             }
         }
 
-        return new HashSet<String>();
+        return new HashSet<>();
     }
 
     public HashSet<String> getTransicion(HashSet<String> macroestado, char simbolo) {
@@ -133,15 +131,16 @@ public class AFND {
     }
 
     private HashSet<String> L_clausura(String estado) {
-        HashSet solucion = new HashSet();
-        solucion.add(estado);
-
-        transicionesL.forEach((f) -> {
-            if (f.getOrigen().equals(estado)) {
-                for (String valor : f.getDestinos()) {
-                    solucion.add(valor);
+        HashSet<String> solucion = new HashSet<>(); 
+        solucion.add(estado);                   //Añadimos el estado actual
+        
+        transicionesL.forEach((transicionL) -> { //Recorremos las L-Transiciones
+                if (transicionL.getOrigen().equals(estado)) { //con origen ese estado
+                    transicionL.getDestinos().forEach((estado_destino) -> {
+                        //Y añadimos a la solucion todos los estados de la LC del destino
+                        solucion.addAll(L_clausura(estado_destino));
+                    });
                 }
-            }
         });
 
         return solucion;
@@ -172,8 +171,8 @@ public class AFND {
 
             estado = getTransicion(estado, simbolo[i]);
 
-            for (String estado2 : L_clausura(estado)) {
-                estado.add(estado2);
+            for (String estado_accesible : L_clausura(estado)) {
+                estado.add(estado_accesible);
             }
 
         }
