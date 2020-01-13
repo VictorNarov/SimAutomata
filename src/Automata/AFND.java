@@ -56,7 +56,7 @@ public class AFND {
 
     
     public void agregarTransicion(String e1, char simbolo, HashSet e2) {
-        this.transiciones.add(new TransicionAFND(e1, e2, simbolo));
+        this.transiciones.add(new TransicionAFND(e1, simbolo,e2));
     }
 
     public void agregarTransicion(TransicionAFND trans) {

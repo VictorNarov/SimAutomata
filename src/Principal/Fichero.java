@@ -157,8 +157,8 @@ public class Fichero {
             destinos.add(valores[i]);
         }
 
-        TransicionAFND temp = new TransicionAFND(valores[1], destinos, valores[2].charAt(1));
-        System.out.println("LEIDO DE FICHERO T: "+new TransicionAFND(valores[1], destinos, valores[2].charAt(1)));
+        TransicionAFND temp = new TransicionAFND(valores[1], valores[2].charAt(1),destinos);
+        System.out.println("LEIDO DE FICHERO T: "+new TransicionAFND(valores[1],valores[2].charAt(1), destinos));
         return temp;
     }
 

@@ -28,7 +28,7 @@ public class TransicionAFND {
     private HashSet<String> destinos;
     private char simbolo;
 
-    public TransicionAFND(String origen, HashSet<String> destino, char simbolo) {
+    public TransicionAFND(String origen, char simbolo, HashSet<String> destino) {
         this.origen = origen;
         this.destinos = destino;
         this.simbolo = simbolo;
