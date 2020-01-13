@@ -130,7 +130,7 @@ public class AFND {
         return false;
     }
 
-    private HashSet<String> L_clausura(String estado) {
+    public HashSet<String> L_clausura(String estado) {
         HashSet<String> solucion = new HashSet<>(); 
         solucion.add(estado);                   //Añadimos el estado actual
         
@@ -146,7 +146,7 @@ public class AFND {
         return solucion;
     }
 
-    private HashSet<String> L_clausura(HashSet<String> estados) { //Devuelve el cjto de estados CL(estados)
+    public HashSet<String> L_clausura(HashSet<String> estados) { //Devuelve el cjto de estados CL(estados)
         HashSet<String> solucion = new HashSet();
 
         estados.forEach((estado) -> {
@@ -179,7 +179,7 @@ public class AFND {
 
         return esFinal(estado);
     }
-
+    
     public void eliminarSimbolo(char s) {
         for (TransicionAFND t : this.transiciones) {
             if (t.getSimbolo() == s) {

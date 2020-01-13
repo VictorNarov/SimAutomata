@@ -1,0 +1,11 @@
+ESTADOS: q0 q1 q2
+INICIAL: q0
+FINALES: q2
+TRANSICIONES:
+ q0 '0' q0
+ q0 '1' q1
+ q1 '1' q2
+ q1 '0' q1
+ q2 '0' q2
+ q2 '1' q1
+FIN

@@ -33,6 +33,9 @@ import javax.swing.table.DefaultTableModel;
 import Principal.panelEstados;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Stack;
+
 /**
  *
  * @author victo
@@ -45,6 +48,13 @@ public class Interfaz extends javax.swing.JFrame {
     private HashSet<String> cjtoEstados = new HashSet();
     private HashSet<String> cjtoSimbolos = new HashSet();
     private DefaultTableModel modeloTT;
+
+    //VARIABLES SIMULACION PASO A PASO
+    private int indiceCadena = 0; //Indice para simular paso a paso
+    private Stack<String> ultimoEstado = new Stack(); //pila de estados
+    private String estadoActual = "";
+    private Stack<HashSet<String>> ultimosEstados = new Stack(); //pila de cjtos de estados
+    private HashSet<String> estadosActuales = new HashSet();
 
     /**
      * Creates new form Interfaz
@@ -61,6 +71,11 @@ public class Interfaz extends javax.swing.JFrame {
         tablaTransicion.setModel(modeloTT);
         botonDestinos.setVisible(false); //Por defecto empieza en AFD y no necesita multples destinos
 
+        labelIteracion.setVisible(false);
+        labelFin.setVisible(false);
+        labelResultado.setVisible(false);
+
+        this.setLocationRelativeTo(null); //Centrar ventana en la pantalla
     }
 
     private void vaciarTabla() {
@@ -74,7 +89,7 @@ public class Interfaz extends javax.swing.JFrame {
         vaciarTabla();
         Object[] simbolos = cjtoSimbolos.toArray();
         ArrayList<Object> columna = new ArrayList();
-        
+
         //System.out.println("ESTOY PILLANDO "+Arrays.toString(simbolos));
         columna.add("ESTADOS/SIMBOLOS");
         for (int i = 0; i < cjtoSimbolos.size(); i++) {
@@ -82,34 +97,36 @@ public class Interfaz extends javax.swing.JFrame {
             //System.out.println("ESTOY PILLANDO "+Arrays.toString(columna));
         }
         //Si es AFND le tenemos que añadir la columna de simbolo LAMBDA
-        if(tipoAFND.isSelected())
+        if (tipoAFND.isSelected()) {
             columna.add("L");
+        }
         modeloTT.setColumnIdentifiers(columna.toArray()); //Añadimos la cabecera de la tabla
-
 
         for (String e : cjtoEstados) // Por cada estado
         {
             columna = new ArrayList<>(); //Reiniciamos la columna
             columna.add(e);
-            
+
             if (tipoAFD.isSelected()) {
                 for (int j = 0; j < cjtoSimbolos.size(); j++) // Rellena cada columna segun el simbolo de entrada 
-               
-                    //System.out.println("VOY A VER SI EXISTE LA T: "+e+", "+ (tablaTransicion.getColumnName(j + 1)).charAt(0));
-                    columna.add(afd.getTransicion(e, (tablaTransicion.getColumnName(j + 1)).charAt(0)));  // Obteniendo la transicion del AFD
-                    
-            } else  //TODO
-                for (int j = 0; j < cjtoSimbolos.size()+1; j++) //Tiene que contar con la columna L
+                //System.out.println("VOY A VER SI EXISTE LA T: "+e+", "+ (tablaTransicion.getColumnName(j + 1)).charAt(0));
                 {
-                    if((tablaTransicion.getColumnName(j + 1)).equals("L"))
-                        columna.add(afnd.getTransicionL(e));
-                    else
-                        columna.add(afnd.getTransicion(e, (tablaTransicion.getColumnName(j + 1)).charAt(0)));
+                    columna.add(afd.getTransicion(e, (tablaTransicion.getColumnName(j + 1)).charAt(0)));  // Obteniendo la transicion del AFD
                 }
-         
+            } else //TODO
+            {
+                for (int j = 0; j < cjtoSimbolos.size() + 1; j++) //Tiene que contar con la columna L
+                {
+                    if ((tablaTransicion.getColumnName(j + 1)).equals("L")) {
+                        columna.add(afnd.getTransicionL(e));
+                    } else {
+                        columna.add(afnd.getTransicion(e, (tablaTransicion.getColumnName(j + 1)).charAt(0)));
+                    }
+                }
+            }
+
             modeloTT.addRow(columna.toArray());
         }
-        
 
     }
 
@@ -150,7 +167,7 @@ public class Interfaz extends javax.swing.JFrame {
         textCadena = new javax.swing.JTextField();
         botonCargar = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        botonEliminarT = new javax.swing.JButton();
         botonEstadosF = new javax.swing.JButton();
         labelEstadoI = new javax.swing.JLabel();
         labelEstadosF = new javax.swing.JLabel();
@@ -161,9 +178,23 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         botonGuardar = new javax.swing.JButton();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        botonSiguiente = new javax.swing.JButton();
+        jLabel16 = new javax.swing.JLabel();
+        textEstadoActual = new javax.swing.JTextField();
+        textSimboloActual = new javax.swing.JTextField();
+        botonAnterior = new javax.swing.JButton();
+        botonIniciar = new javax.swing.JButton();
+        labelIteracion = new javax.swing.JLabel();
+        labelFin = new javax.swing.JLabel();
+        labelResultado = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SimAutomata - Víctor Roríguez y Fran Beltrán ");
+        setBackground(new java.awt.Color(255, 255, 255));
+        setLocation(new java.awt.Point(0, 0));
 
         jLabel1.setFont(new java.awt.Font("Rockwell", 0, 12)); // NOI18N
         jLabel1.setText("SimAutomata - Víctor Rodríguez y Fran Beltrán - 2019");
@@ -307,7 +338,12 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel9.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
         jLabel9.setText("0) Tipo de Autómata");
 
-        textCadena.setFont(new java.awt.Font("Rockwell", 0, 48)); // NOI18N
+        textCadena.setFont(new java.awt.Font("Rockwell", 0, 36)); // NOI18N
+        textCadena.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textCadenaActionPerformed(evt);
+            }
+        });
 
         botonCargar.setFont(new java.awt.Font("Rockwell", 0, 12)); // NOI18N
         botonCargar.setText("Cargar");
@@ -320,10 +356,10 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel10.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
         jLabel10.setText("Eliminar transiciones seleccionadas");
 
-        jButton1.setText("Eliminar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        botonEliminarT.setText("Eliminar");
+        botonEliminarT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                botonEliminarTActionPerformed(evt);
             }
         });
 
@@ -384,6 +420,54 @@ public class Interfaz extends javax.swing.JFrame {
             }
         });
 
+        jLabel13.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
+        jLabel13.setText("Cadena a reconocer");
+
+        jLabel14.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
+        jLabel14.setText("Simular paso a paso");
+
+        jLabel15.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
+        jLabel15.setText("Estado actual");
+
+        botonSiguiente.setText("Siguiente");
+        botonSiguiente.setEnabled(false);
+        botonSiguiente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonSiguienteActionPerformed(evt);
+            }
+        });
+
+        jLabel16.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
+        jLabel16.setText("Símbolo a leer");
+
+        textEstadoActual.setEditable(false);
+
+        textSimboloActual.setEditable(false);
+
+        botonAnterior.setText("Anterior");
+        botonAnterior.setEnabled(false);
+        botonAnterior.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonAnteriorActionPerformed(evt);
+            }
+        });
+
+        botonIniciar.setText("Iniciar");
+        botonIniciar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonIniciarActionPerformed(evt);
+            }
+        });
+
+        labelIteracion.setFont(new java.awt.Font("Rockwell", 0, 12)); // NOI18N
+        labelIteracion.setText("Iteración: 0");
+
+        labelFin.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
+        labelFin.setText("FIN DE CADENA");
+
+        labelResultado.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
+        labelResultado.setText("RECONOCIDA");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -394,21 +478,60 @@ public class Interfaz extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel10)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1))
+                        .addComponent(botonEliminarT))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 333, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(textCadena)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(botonSimular, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel7)
+                                            .addComponent(jLabel8)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(comboOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(comboSimbolo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGap(4, 4, 4)
+                                                .addComponent(botonEstadosF)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(labelEstadosF))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGap(3, 3, 3)
+                                                .addComponent(comboEstadoI, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(labelEstadoI))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGap(7, 7, 7)
+                                                .addComponent(comboDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(botonDestinos)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(botonAddT))))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(textEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(botonAddEstado)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(botonEliminarEstado))
+                                    .addComponent(jLabel6)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(textCadena, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(botonSimular, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel13)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel14)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(labelIteracion)))
+                                .addGap(0, 39, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel9)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -422,64 +545,48 @@ public class Interfaz extends javax.swing.JFrame {
                                         .addComponent(botonAddSimbolo)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(botonEliminarSimbolo)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel5)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(botonCargar))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel4)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(comboEjemplo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(jLabel5)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addComponent(botonCargar))
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(jLabel4)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(comboEjemplo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel12)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(botonGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel12)
+                                .addComponent(jLabel11)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(botonGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(botonLimpiar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel1)))
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel16)
+                            .addComponent(jLabel15))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel7)
-                                    .addComponent(jLabel8)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(comboOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(comboSimbolo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(4, 4, 4)
-                                        .addComponent(botonEstadosF)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(labelEstadosF))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(3, 3, 3)
-                                        .addComponent(comboEstadoI, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(labelEstadoI))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(7, 7, 7)
-                                        .addComponent(comboDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(botonDestinos)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(botonAddT))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(textEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(botonAddEstado)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(botonEliminarEstado))
-                            .addComponent(jLabel6))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel11)
+                                .addComponent(textSimboloActual, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(9, 9, 9)
+                                .addComponent(botonAnterior))
+                            .addComponent(textEstadoActual, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(botonLimpiar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel1)))
-                .addContainerGap())
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(botonSiguiente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(botonIniciar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(labelFin)
+                            .addComponent(labelResultado))
+                        .addGap(70, 70, 70))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -539,18 +646,37 @@ public class Interfaz extends javax.swing.JFrame {
                             .addComponent(jLabel8)
                             .addComponent(botonEstadosF)
                             .addComponent(labelEstadosF))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel13)
+                        .addGap(1, 1, 1)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(textCadena, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
-                            .addComponent(botonSimular, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)))
+                            .addComponent(textCadena, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(botonSimular, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel14)
+                            .addComponent(labelIteracion))
+                        .addGap(10, 10, 10)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel15)
+                            .addComponent(textEstadoActual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(botonIniciar)
+                            .addComponent(labelFin))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel16)
+                            .addComponent(textSimboloActual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(botonSiguiente)
+                            .addComponent(botonAnterior)
+                            .addComponent(labelResultado)))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane1)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel10)
-                        .addComponent(jButton1)
+                        .addComponent(botonEliminarT)
                         .addComponent(botonLimpiar)
                         .addComponent(jLabel11))
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
@@ -610,8 +736,8 @@ public class Interfaz extends javax.swing.JFrame {
         {
             TransicionAFD t = new TransicionAFD(comboOrigen.getSelectedItem().toString(), comboSimbolo.getSelectedItem().toString().charAt(0), comboDestino.getSelectedItem().toString());
             afd.agregarTransicion(t);
-            System.out.println("AÑADIDA TRANSICION:" +t);
-        } 
+            System.out.println("AÑADIDA TRANSICION:" + t);
+        }
 //        else //Debemos desplegar una lista 
 //        {
 //            botonAddT.setVisible(false); //Se añade directamente con la ventana de 
@@ -654,7 +780,7 @@ public class Interfaz extends javax.swing.JFrame {
         actualizarTabla();
     }//GEN-LAST:event_botonEliminarEstadoActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void botonEliminarTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminarTActionPerformed
         if (tipoAFD.isSelected()) {
             for (int i : tablaTransicion.getSelectedRows()) {
                 System.out.println("Eliminando fila: " + i);
@@ -671,7 +797,7 @@ public class Interfaz extends javax.swing.JFrame {
         }
 
         actualizarTabla();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_botonEliminarTActionPerformed
 
     private void botonCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCargarActionPerformed
         // TODO add your handling code here:
@@ -696,26 +822,24 @@ public class Interfaz extends javax.swing.JFrame {
                 if (tipoAFD.isSelected()) {
                     datos.procesarAFD();
                     this.afd = datos.generarAutomataAFD();
-                    this.labelEstadoI.setText("Estado inicial: "+afd.getEstadoInicial());
-                    this.labelEstadosF.setText("Estados finales: "+afd.getEstadosFinales());
-                     System.out.println(afd);
+                    this.labelEstadoI.setText("Estado inicial: " + afd.getEstadoInicial());
+                    this.labelEstadosF.setText("Estados finales: " + afd.getEstadosFinales());
+                    System.out.println(afd);
                 } else {
                     datos.procesarAFND();
                     this.afnd = datos.generarAutomataAFND();
-                    this.labelEstadoI.setText("Estado inicial: "+afnd.getEstadoInicial());
-                    this.labelEstadosF.setText("Estados finales: "+afnd.getEstadosFinales());
+                    this.labelEstadoI.setText("Estado inicial: " + afnd.getEstadoInicial());
+                    this.labelEstadosF.setText("Estados finales: " + afnd.getEstadosFinales());
                     System.out.println(afnd);
                 }
-               
 
                 this.cjtoEstados = new HashSet<String>();
                 this.cjtoEstados.addAll(datos.getConjuntoEstados());
                 this.cjtoSimbolos = new HashSet<String>();
                 this.cjtoSimbolos.addAll(datos.getConjuntoSimbolos());
-                
-                
-                System.out.println("ESTADOS  \n"+cjtoEstados);
-                System.out.println("SIMBOLOS \n"+cjtoSimbolos);
+
+                System.out.println("ESTADOS  \n" + cjtoEstados);
+                System.out.println("SIMBOLOS \n" + cjtoSimbolos);
                 this.actualizarTabla();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Error al cargar fichero", ex.getMessage(), JOptionPane.ERROR_MESSAGE);
@@ -727,59 +851,57 @@ public class Interfaz extends javax.swing.JFrame {
     private void botonEstadosFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEstadosFActionPerformed
         panelEstados pE = new panelEstados();
         pE.setEstados(cjtoEstados);
-        
+
         int res = JOptionPane.showConfirmDialog(null, pE,
-                  "SELECCIONAR ESTADOS", JOptionPane.OK_CANCEL_OPTION,
-                  JOptionPane.PLAIN_MESSAGE);
+                "SELECCIONAR ESTADOS", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
         if (res == JOptionPane.OK_OPTION) {
-            if(tipoAFD.isSelected())
+            if (tipoAFD.isSelected()) {
                 afd.setEstadosFinales(pE.getEstados());
-            else
+            } else {
                 afnd.setEstadosFinales(pE.getEstados());
-            
-            labelEstadosF.setText("Estados finales: "+pE.getEstados());
+            }
+
+            labelEstadosF.setText("Estados finales: " + pE.getEstados());
         }
-       
+
     }//GEN-LAST:event_botonEstadosFActionPerformed
 
     private void botonSimularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSimularActionPerformed
-        if(tipoAFD.isSelected()){
-            if(afd.reconocer(textCadena.getText()))
-                JOptionPane.showConfirmDialog(rootPane,"CADENA RECONOCIDA" , "RESULTADO DEL AUTOMATA", JOptionPane.PLAIN_MESSAGE, JOptionPane.INFORMATION_MESSAGE);
-            else
-                JOptionPane.showConfirmDialog(rootPane,"CADENA NO RECONOCIDA" , "RESULTADO DEL AUTOMATA", JOptionPane.PLAIN_MESSAGE, JOptionPane.ERROR_MESSAGE);
-        }
-        else
-        {
-           if(afnd.reconocer(textCadena.getText()))
-                JOptionPane.showConfirmDialog(rootPane,"CADENA RECONOCIDA" , "RESULTADO DEL AUTOMATA", JOptionPane.PLAIN_MESSAGE, JOptionPane.INFORMATION_MESSAGE);
-            else
-                JOptionPane.showConfirmDialog(rootPane,"CADENA NO RECONOCIDA" , "RESULTADO DEL AUTOMATA", JOptionPane.PLAIN_MESSAGE, JOptionPane.ERROR_MESSAGE);
+        if (tipoAFD.isSelected()) {
+            if (afd.reconocer(textCadena.getText())) {
+                JOptionPane.showConfirmDialog(rootPane, "CADENA RECONOCIDA", "RESULTADO DEL AUTOMATA", JOptionPane.PLAIN_MESSAGE, JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showConfirmDialog(rootPane, "CADENA NO RECONOCIDA", "RESULTADO DEL AUTOMATA", JOptionPane.PLAIN_MESSAGE, JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            if (afnd.reconocer(textCadena.getText())) {
+                JOptionPane.showConfirmDialog(rootPane, "CADENA RECONOCIDA", "RESULTADO DEL AUTOMATA", JOptionPane.PLAIN_MESSAGE, JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showConfirmDialog(rootPane, "CADENA NO RECONOCIDA", "RESULTADO DEL AUTOMATA", JOptionPane.PLAIN_MESSAGE, JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_botonSimularActionPerformed
 
     private void botonDestinosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonDestinosActionPerformed
         panelEstados pE = new panelEstados();
         pE.setEstados(cjtoEstados);
-        
+
         int res = JOptionPane.showConfirmDialog(null, pE,
-                  "SELECCIONAR ESTADOS", JOptionPane.OK_CANCEL_OPTION,
-                  JOptionPane.PLAIN_MESSAGE);
+                "SELECCIONAR ESTADOS", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
         if (res == JOptionPane.OK_OPTION) {
-            if(comboSimbolo.getSelectedItem().equals("LAMBDA")) //Es una L-T             
+            if (comboSimbolo.getSelectedItem().equals("LAMBDA")) //Es una L-T             
             {
-                TransicionL lt = new TransicionL(comboOrigen.getSelectedItem().toString(),pE.getEstados());
+                TransicionL lt = new TransicionL(comboOrigen.getSelectedItem().toString(), pE.getEstados());
                 afnd.agregarTransicionL(lt);
-                System.out.println("AÑADIDA LAMBDA-T:" +lt);
-            }
-            else
-            {              
+                System.out.println("AÑADIDA LAMBDA-T:" + lt);
+            } else {
                 TransicionAFND t = new TransicionAFND(comboOrigen.getSelectedItem().toString(), comboSimbolo.getSelectedItem().toString().charAt(0), pE.getEstados());
                 afnd.agregarTransicion(t);
-                System.out.println("AÑADIDA T: "+t);
+                System.out.println("AÑADIDA T: " + t);
             }
-               
-           
+
         }
         actualizarTabla();
     }//GEN-LAST:event_botonDestinosActionPerformed
@@ -789,14 +911,121 @@ public class Interfaz extends javax.swing.JFrame {
         this.cjtoSimbolos.clear();
         this.afd = new AFD();
         this.afnd = new AFND();
+        textSimboloActual.setText("");
+        textCadena.setText("");
+        textEstadoActual.setText("");
         vaciarTabla();
         actualizarTabla(); //Volver a pintar la tabla vacia
-        
+
     }//GEN-LAST:event_botonLimpiarActionPerformed
 
     private void botonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonGuardarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_botonGuardarActionPerformed
+
+    private void textCadenaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textCadenaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textCadenaActionPerformed
+
+    private void botonIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonIniciarActionPerformed
+        if (textCadena.getText().equals("")) //Si la cadena esta vacia
+            JOptionPane.showMessageDialog(this, "Error: cadena vacia", "Error", JOptionPane.ERROR_MESSAGE);
+
+        else if (indiceCadena == 0) //Vamos a empezar la simulacion
+        {
+            botonSiguiente.setEnabled(true); //activamos el boton siguiente
+            labelIteracion.setVisible(true);
+            labelIteracion.setText("Iteración: 1");
+            String estadoI;
+            if (tipoAFD.isSelected()) {
+                estadoI = afd.getEstadoInicial();
+                estadoActual = estadoI;
+            } else {
+                estadoI = afnd.getEstadoInicial();
+                estadosActuales.addAll(afnd.L_clausura(estadoI));
+            }
+
+            textEstadoActual.setText(estadoI);
+            textSimboloActual.setText(textCadena.getText().charAt(0) + ""); //caracter inicial
+            botonIniciar.setText("Reiniciar");
+        } else //Pulsa boton reiniciar
+        {
+            indiceCadena = 0;
+            labelIteracion.setVisible(false);
+            labelResultado.setVisible(false);
+            labelFin.setVisible(false);
+            estadoActual = "";
+            estadosActuales.clear();
+            ultimoEstado.clear();
+            ultimosEstados.clear();
+            textEstadoActual.setText("");
+            textSimboloActual.setText("");
+            botonIniciar.setText("Iniciar");
+            botonSiguiente.setEnabled(false);
+            botonAnterior.setEnabled(false);
+        }
+    }//GEN-LAST:event_botonIniciarActionPerformed
+
+    private void botonSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSiguienteActionPerformed
+        if (indiceCadena == 0) {
+            botonAnterior.setEnabled(true);
+        }
+        if (tipoAFD.isSelected()) {
+            ultimoEstado.push(estadoActual);
+            estadoActual = afd.getTransicion(estadoActual, textCadena.getText().charAt(indiceCadena));
+            textEstadoActual.setText(estadoActual);
+        } else {
+            ultimosEstados.push(estadosActuales);
+            estadosActuales = afnd.getTransicion(estadosActuales, textCadena.getText().charAt(indiceCadena));
+            estadosActuales = afnd.L_clausura(estadosActuales);
+            textEstadoActual.setText(estadosActuales.toString());
+        }
+        indiceCadena++;
+        if (indiceCadena == textCadena.getText().length()) //Fin de cadena
+        {
+            botonSiguiente.setEnabled(false);
+            labelFin.setVisible(true);
+            if (tipoAFD.isSelected() && afd.esFinal(estadoActual)) {
+                labelResultado.setText("RECONOCIDA");
+            } else if (tipoAFD.isSelected() && !afd.esFinal(estadoActual)) {
+                labelResultado.setText("NO RECONOCIDA");
+            } else if (tipoAFND.isSelected() && afnd.esFinal(estadosActuales)) {
+                labelResultado.setText("RECONOCIDA");
+            } else {
+                labelResultado.setText("NO RECONOCIDA");
+            }
+            labelResultado.setVisible(true);
+        } 
+        else
+        {
+            textSimboloActual.setText(textCadena.getText().charAt(indiceCadena) + "");
+             labelIteracion.setText("Iteración: " + (indiceCadena + 1));
+        }        
+       
+
+
+    }//GEN-LAST:event_botonSiguienteActionPerformed
+
+    private void botonAnteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAnteriorActionPerformed
+        indiceCadena--;
+        labelResultado.setVisible(false);
+        labelFin.setVisible(false);
+        botonSiguiente.setEnabled(true);
+        labelIteracion.setText("Iteración: "+(indiceCadena+1));
+
+        if (tipoAFD.isSelected()) {
+            estadoActual = ultimoEstado.pop();
+            textEstadoActual.setText(estadoActual);
+        } else {
+            estadosActuales = ultimosEstados.pop();
+            textEstadoActual.setText(ultimosEstados.toString());
+        }
+        textSimboloActual.setText(textCadena.getText().charAt(indiceCadena) + "");
+
+        if (indiceCadena == 0)
+            botonAnterior.setEnabled(false);
+        
+    }//GEN-LAST:event_botonAnteriorActionPerformed
 
     /**
      * @param args the command line arguments
@@ -840,13 +1069,17 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JButton botonAddEstado;
     private javax.swing.JButton botonAddSimbolo;
     private javax.swing.JButton botonAddT;
+    private javax.swing.JButton botonAnterior;
     private javax.swing.JButton botonCargar;
     private javax.swing.JButton botonDestinos;
     private javax.swing.JButton botonEliminarEstado;
     private javax.swing.JButton botonEliminarSimbolo;
+    private javax.swing.JButton botonEliminarT;
     private javax.swing.JButton botonEstadosF;
     private javax.swing.JButton botonGuardar;
+    private javax.swing.JButton botonIniciar;
     private javax.swing.JButton botonLimpiar;
+    private javax.swing.JButton botonSiguiente;
     private javax.swing.JButton botonSimular;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> comboDestino;
@@ -854,11 +1087,14 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> comboEstadoI;
     private javax.swing.JComboBox<String> comboOrigen;
     private javax.swing.JComboBox<String> comboSimbolo;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -870,10 +1106,15 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelEstadoI;
     private javax.swing.JLabel labelEstadosF;
+    private javax.swing.JLabel labelFin;
+    private javax.swing.JLabel labelIteracion;
+    private javax.swing.JLabel labelResultado;
     private javax.swing.JTable tablaTransicion;
     private javax.swing.JTextField textCadena;
     private javax.swing.JTextField textEstado;
+    private javax.swing.JTextField textEstadoActual;
     private javax.swing.JTextField textSimbolo;
+    private javax.swing.JTextField textSimboloActual;
     private javax.swing.JRadioButton tipoAFD;
     private javax.swing.JRadioButton tipoAFND;
     // End of variables declaration//GEN-END:variables

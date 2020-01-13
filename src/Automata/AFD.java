@@ -109,6 +109,7 @@ public class AFD implements Cloneable, Proceso {
         return esFinal(estado);
     }
     
+    
     @Override
     public String toString() {
         String mensaje="";
