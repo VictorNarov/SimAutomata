@@ -10,7 +10,7 @@ import java.util.HashSet;
 public class AFND {
 
     private HashSet<String> estadosFinales;
-    private String estadoInicial;
+    private String estadoInicial="";
     private HashSet<TransicionAFND> transiciones;
     private HashSet<TransicionL> transicionesL;
 
@@ -65,7 +65,6 @@ public class AFND {
         return transicionesL;
     }
 
-    
     public HashSet<String> getEstadosFinales() {
         return estadosFinales;
     }

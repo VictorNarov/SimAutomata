@@ -1058,11 +1058,15 @@ public class Interfaz extends javax.swing.JFrame {
        
         //panel.setPreferredSize(new Dimension(50,50));
         try {
-            scrollPane.setViewportView(grafica.generarAFD(afd, cjtoEstados));
+            if(tipoAFD.isSelected())
+                scrollPane.setViewportView(grafica.generarAFD(afd, cjtoEstados));
+            else
+                scrollPane.setViewportView(grafica.generarAFND(afnd, cjtoEstados));
         } catch (Exception ex) {
             JOptionPane.showConfirmDialog(null, ex.getMessage(),
                 "Error al generar grafica", JOptionPane.OK_OPTION,
                 JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
         }
  
         

@@ -17,7 +17,10 @@
 package Principal;
 
 import Automata.AFD;
+import Automata.AFND;
 import Automata.TransicionAFD;
+import Automata.TransicionAFND;
+import Automata.TransicionL;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
@@ -79,12 +82,11 @@ public class Grafica extends javax.swing.JPanel {
         graph.setEdgeLabelsMovable(false);
     }
 
-    //TODO
+    //TODO excepciones
     private void generarEstados(HashSet<String> cjtoEstados, String estadoI, HashSet<String> estadosF) throws Exception{
         estados = new ArrayList<>(cjtoEstados);
         
-        q0 = graph.insertVertex(parent, null, "", 100, 100, 50, 50, "opacity=0"); //incial
-        
+        //Añadir los estados al grafo
         try {
             for (String estado : estados) {
                 if(estadosF.contains(estado))
@@ -93,23 +95,21 @@ public class Grafica extends javax.swing.JPanel {
                     objEstados.add(graph.insertVertex(parent, null, estado, 100, 200, 50, 50, "ESTADO"));
 
             }
-
             
-            graph.insertEdge(parent, null, "", q0, objEstados.get(estados.indexOf(estadoI))); //flechita inicial
-        
+            q0 = graph.insertVertex(parent, null, "", 100, 100, 50, 50, "opacity=0"); //incial
+            if(estadoI.equals(""))
+                throw new Exception("Error: estado inicial no definido!");
+            else
+                graph.insertEdge(parent, null, "", q0, objEstados.get(estados.indexOf(estadoI))); //flechita inicial
+            
 
         } finally {
             graph.getModel().endUpdate();
 
         }
-
-        
-
     }
 
     public mxGraphComponent generarAFD(AFD automata, HashSet<String> cjtoEstados) throws Exception{
-
-        objEstados = new ArrayList<>();
 
         try {
             generarEstados(cjtoEstados, automata.getEstadoInicial(), automata.getEstadosFinales());
@@ -119,6 +119,7 @@ public class Grafica extends javax.swing.JPanel {
                     graph.insertEdge(parent, null, t.getSimbolo(), objEstados.get(estados.indexOf(t.getEstadoO())), objEstados.get(estados.indexOf(t.getEstadoD())), "rounded=1");
                 }
             }
+            
 
             mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
 
@@ -134,6 +135,40 @@ public class Grafica extends javax.swing.JPanel {
         return new mxGraphComponent(graph);
     }
 
+        public mxGraphComponent generarAFND(AFND automata, HashSet<String> cjtoEstados) throws Exception{
+
+        try {
+            generarEstados(cjtoEstados, automata.getEstadoInicial(), automata.getEstadosFinales());
+            
+            //Añadimos las transiciones que consumen simbolo
+            if (!automata.getTransiciones().isEmpty()) {
+                for (TransicionAFND t : automata.getTransiciones()) {
+                    for(String estadoDestino : t.getDestinos())
+                        graph.insertEdge(parent, null, t.getSimbolo(), objEstados.get(estados.indexOf(t.getOrigen())), objEstados.get(estados.indexOf(estadoDestino)), "rounded=1");
+                }
+            }
+
+            //Añadimos las transiciones lambda
+            if(!automata.getTransicionesL().isEmpty()) {
+                for (TransicionL tl : automata.getTransicionesL()) {    //Por cada transicion lambda
+                    for(String estadoDestino : tl.getDestinos())        //y por cada destino de esa T-L
+                        graph.insertEdge(parent, null, "L", objEstados.get(estados.indexOf(tl.getOrigen())), objEstados.get(estados.indexOf(estadoDestino)), "rounded=1");
+                }
+            }
+            
+            mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
+
+            layout.setInterRankCellSpacing(50.0);
+            layout.setIntraCellSpacing(50.0);
+            layout.setDisableEdgeStyle(false);
+            layout.execute(graph.getDefaultParent());
+
+        } finally {
+            graph.getModel().endUpdate();
+        }
+
+        return new mxGraphComponent(graph);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
