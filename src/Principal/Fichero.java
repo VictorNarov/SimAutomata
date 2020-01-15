@@ -1,19 +1,3 @@
-/* 
- * Copyright (C) 2020 Víctor Manuel Rodríguez Navarro
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package Principal;
 
 import Automata.AFD;
@@ -21,7 +5,10 @@ import Automata.AFND;
 import Automata.TransicionAFD;
 import Automata.TransicionAFND;
 import Automata.TransicionL;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -29,6 +16,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -36,7 +25,7 @@ import java.util.Scanner;
  */
 public class Fichero {
 
-    private final Path ruta;
+    private Path ruta, salida;
     private final static Charset ENCODING = StandardCharsets.UTF_8;
     private String estado_inicial;
     private HashSet<String> estados_finales;
@@ -70,8 +59,8 @@ public class Fichero {
             linea = scanner.nextLine();
             valores = linea.split(" ");
 
-            estado_inicial=valores[1];
-            System.out.println("ESTADO INICIAL LEIDO: "+valores[1]);
+            estado_inicial = valores[1];
+            System.out.println("ESTADO INICIAL LEIDO: " + valores[1]);
 
             // Leemos los estados finales
             linea = scanner.nextLine();
@@ -79,7 +68,7 @@ public class Fichero {
 
             for (int i = 1; i < valores.length; i++) {
                 estados_finales.add(valores[i]);
-                System.out.println("ESTADO FINAL LEIDO: "+valores[i]);
+                System.out.println("ESTADO FINAL LEIDO: " + valores[i]);
             }
 
             linea = scanner.nextLine();
@@ -106,8 +95,8 @@ public class Fichero {
             linea = scanner.nextLine();
             valores = linea.split(" ");
 
-            estado_inicial=valores[1];
-            System.out.println("ESTADO INICIAL LEIDO: "+valores[1]);
+            estado_inicial = valores[1];
+            System.out.println("ESTADO INICIAL LEIDO: " + valores[1]);
 
             // Leemos los estados finales
             linea = scanner.nextLine();
@@ -115,7 +104,7 @@ public class Fichero {
 
             for (int i = 1; i < valores.length; i++) {
                 estados_finales.add(valores[i]);
-                System.out.println("ESTADO FINAL LEIDO: "+valores[i]);
+                System.out.println("ESTADO FINAL LEIDO: " + valores[i]);
             }
 
             linea = scanner.nextLine();
@@ -149,7 +138,6 @@ public class Fichero {
         String valores[] = contenido.split(" ");
 
         this.conjuntoSimbolos.add(valores[2].split("'")[1]); //Separar las comillas simples
-        
 
         HashSet<String> destinos = new HashSet();
 
@@ -157,8 +145,8 @@ public class Fichero {
             destinos.add(valores[i]);
         }
 
-        TransicionAFND temp = new TransicionAFND(valores[1], valores[2].charAt(1),destinos);
-        System.out.println("LEIDO DE FICHERO T: "+new TransicionAFND(valores[1],valores[2].charAt(1), destinos));
+        TransicionAFND temp = new TransicionAFND(valores[1], valores[2].charAt(1), destinos);
+        System.out.println("LEIDO DE FICHERO T: " + new TransicionAFND(valores[1], valores[2].charAt(1), destinos));
         return temp;
     }
 
@@ -166,7 +154,7 @@ public class Fichero {
         String valores[] = contenido.split(" ");
 
         this.conjuntoEstados.add(valores[1]);
-        
+
         HashSet<String> destinos = new HashSet();
 
         for (int i = 2; i < valores.length; i++) {
@@ -185,10 +173,10 @@ public class Fichero {
         for (TransicionAFD valor : this.transiciones_AFD) {
             temp.agregarTransicion(valor);
         }
-        
+
         temp.setEstadoInicial(estado_inicial);
         temp.setEstadosFinales(estados_finales);
-        
+
         return temp;
     }
 
@@ -205,8 +193,86 @@ public class Fichero {
 
         temp.setEstadoInicial(estado_inicial);
         temp.setEstadosFinales(estados_finales);
-        
+
         return temp;
+    }
+
+    public void generarFichero(AFD automata, String nombreFichero) {
+        try {
+            this.salida = Paths.get(nombreFichero);
+            FileWriter fw = new FileWriter(salida.toFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter salida = new PrintWriter(bw);
+            String mensaje = "ESTADOS:";
+
+            for (String valor : this.conjuntoEstados) {
+                mensaje += " " + valor;
+            }
+
+            salida.println(mensaje);
+            salida.println("INICIAL: " + this.estado_inicial);
+            mensaje = "FINALES: ";
+
+            for (String valor : this.estados_finales) {
+                mensaje += valor + " ";
+            }
+
+            salida.println(mensaje);
+            salida.println("TRANSICIONES:");
+
+            for (TransicionAFD valor : this.transiciones_AFD) {
+                salida.println(valor);
+            }
+
+            salida.println("FIN");
+            salida.close();
+            bw.close();
+
+        } catch (IOException ex) {
+            Logger.getLogger(Fichero.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void generarFichero(AFND automata, String nombreFichero) {
+        try {
+            this.salida = Paths.get(nombreFichero);
+            FileWriter fw = new FileWriter(salida.toFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter salida = new PrintWriter(bw);
+            String mensaje = "ESTADOS:";
+
+            for (String valor : this.conjuntoEstados) {
+                mensaje += " " + valor;
+            }
+
+            salida.println(mensaje);
+            salida.println("INICIAL: " + this.estado_inicial);
+            mensaje = "FINALES: ";
+
+            for (String valor : this.estados_finales) {
+                mensaje += valor + " ";
+            }
+
+            salida.println(mensaje);
+            salida.println("TRANSICIONES:");
+
+            for (TransicionAFND valor : this.transiciones_AFND) {
+                salida.println(valor);
+            }
+            
+            salida.println("TRANSICIONES_L:");
+            
+            for (TransicionL valor: this.transiciones_L) {
+                salida.println(valor);
+            }
+
+            salida.println("FIN");
+            salida.close();
+            bw.close();
+
+        } catch (IOException ex) {
+            Logger.getLogger(Fichero.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public HashSet<String> getConjuntoEstados() {
@@ -221,10 +287,10 @@ public class Fichero {
         Fichero temp = new Fichero("D://2.txt");
         Fichero temp2 = new Fichero("D://1.txt");
 
-        temp.procesarAFND();
-        System.out.println(temp.generarAutomataAFND());
-
-//        temp2.procesarAFD();
-//        System.out.println(temp2.generarAutomataAFD());
+        temp2.procesarAFND();
+        temp2.generarFichero(temp.generarAutomataAFND(), "D://pruebaAFND.txt");
+        
+        temp.procesarAFD();
+        temp.generarFichero(temp2.generarAutomataAFD(), "D://pruebaAFD.txt");
     }
 }

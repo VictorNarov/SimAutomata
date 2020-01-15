@@ -47,7 +47,7 @@ public class TransicionAFD {
     
     @Override
     public String toString() {
-        return ("f(" +this.estadoO + "," + this.simbolo + ") --> " + this.estadoD);
+        return (" " + this.estadoO + " '" + this.simbolo + "' " + this.estadoD);
     }
 
     @Override

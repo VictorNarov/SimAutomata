@@ -32,9 +32,18 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import Principal.panelEstados;
 import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 
 /**
  *
@@ -190,6 +199,7 @@ public class Interfaz extends javax.swing.JFrame {
         labelIteracion = new javax.swing.JLabel();
         labelFin = new javax.swing.JLabel();
         labelResultado = new javax.swing.JLabel();
+        botonGenerar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SimAutomata - Víctor Roríguez y Fran Beltrán ");
@@ -468,6 +478,13 @@ public class Interfaz extends javax.swing.JFrame {
         labelResultado.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
         labelResultado.setText("RECONOCIDA");
 
+        botonGenerar.setText("GENERAR GRAFICA");
+        botonGenerar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonGenerarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -512,12 +529,6 @@ public class Interfaz extends javax.swing.JFrame {
                                                 .addComponent(botonDestinos)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(botonAddT))))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(textEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(botonAddEstado)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(botonEliminarEstado))
                                     .addComponent(jLabel6)
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(textCadena, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -586,7 +597,16 @@ public class Interfaz extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(labelFin)
                             .addComponent(labelResultado))
-                        .addGap(70, 70, 70))))
+                        .addGap(70, 88, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(textEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(botonAddEstado)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(botonEliminarEstado)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(botonGenerar)
+                        .addGap(34, 34, 34))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -613,7 +633,8 @@ public class Interfaz extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(botonAddEstado)
                                     .addComponent(textEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(botonEliminarEstado))
+                                    .addComponent(botonEliminarEstado)
+                                    .addComponent(botonGenerar))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jLabel6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
@@ -629,7 +650,7 @@ public class Interfaz extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(botonGuardar)
                                     .addComponent(jLabel12))
-                                .addGap(84, 84, 84)))
+                                .addGap(86, 86, 86)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(comboOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(comboDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -750,7 +771,7 @@ public class Interfaz extends javax.swing.JFrame {
 //
 //            ventana.setVisible(true);
 //        }
-//        actualizarTabla();
+        actualizarTabla();
     }//GEN-LAST:event_botonAddTActionPerformed
 
     private void botonEliminarSimboloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminarSimboloActionPerformed
@@ -1027,6 +1048,47 @@ public class Interfaz extends javax.swing.JFrame {
         
     }//GEN-LAST:event_botonAnteriorActionPerformed
 
+    private void botonGenerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonGenerarActionPerformed
+        Grafica grafica = new Grafica();
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        
+        //JPanel panel = new JPanel();
+       
+        //panel.setPreferredSize(new Dimension(50,50));
+        try {
+            scrollPane.setViewportView(grafica.generarAFD(afd, cjtoEstados));
+        } catch (Exception ex) {
+            JOptionPane.showConfirmDialog(null, ex.getMessage(),
+                "Error al generar grafica", JOptionPane.OK_OPTION,
+                JOptionPane.ERROR_MESSAGE);
+        }
+ 
+        
+        //final JOptionPane OptionPane = new JOptionPane(panel);
+        //final JDialog dialog = OptionPane.createDialog((JFrame)null, "REPRESENTACION GRAFICA");
+        JDialog dialog = new JDialog();
+        dialog.getContentPane().setLayout(new BorderLayout(0, 0));
+        dialog.getContentPane().add(scrollPane,BorderLayout.CENTER);
+        dialog.setBounds(0, 0, 100, this.getHeight());
+
+ 
+        dialog.setLocationRelativeTo(this);
+        dialog.setLocation(dialog.getLocation().x+580, dialog.getLocation().y);
+        dialog.setModal(false);
+        dialog.setAlwaysOnTop(true);
+        dialog.setTitle("REPRESENTACION GRAFICA");
+        dialog.setSize(300,this.getHeight());
+//        dialog.setMaximumSize(new Dimension(900,500));
+        dialog.setVisible(true);
+
+        
+//        JOptionPane.showConfirmDialog(null, panel,
+//                "grAFICA", JOptionPane.OK_OPTION,
+//                JOptionPane.PLAIN_MESSAGE);
+    }//GEN-LAST:event_botonGenerarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1076,6 +1138,7 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JButton botonEliminarSimbolo;
     private javax.swing.JButton botonEliminarT;
     private javax.swing.JButton botonEstadosF;
+    private javax.swing.JButton botonGenerar;
     private javax.swing.JButton botonGuardar;
     private javax.swing.JButton botonIniciar;
     private javax.swing.JButton botonLimpiar;

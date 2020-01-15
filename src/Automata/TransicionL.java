@@ -43,7 +43,13 @@ public class TransicionL {
     @Override
     public String toString()
     {
-        return ("\nf(" + origen +", L) -> " + destinos);
+        String mensaje = " " + this.origen;
+        
+        for (String valor: this.destinos) {
+            mensaje += " " + valor;
+        }
+        
+        return mensaje;
     }
 
     @Override

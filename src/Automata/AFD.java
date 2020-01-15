@@ -26,7 +26,7 @@ import java.util.HashSet;
  */
 public class AFD implements Cloneable, Proceso {
     private HashSet<String> estadosFinales;
-    private String estadoInicial;
+    private String estadoInicial = "";
     private HashSet<TransicionAFD> transiciones;
     
     public AFD() {
@@ -65,6 +65,10 @@ public class AFD implements Cloneable, Proceso {
 
     public HashSet<String> getEstadosFinales() {
         return estadosFinales;
+    }
+
+    public HashSet<TransicionAFD> getTransiciones() {
+        return transiciones;
     }
     
     public void addEstadoFinal(String estadoFinal) {
