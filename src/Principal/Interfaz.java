@@ -21,6 +21,7 @@ import Automata.AFD;
 import Automata.TransicionAFD;
 import Automata.TransicionAFND;
 import Automata.TransicionL;
+import Grafo.ManejaGrafo;
 import java.awt.Frame;
 import java.io.File;
 import java.nio.file.Paths;
@@ -31,6 +32,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import Principal.panelEstados;
+import com.mxgraph.swing.mxGraphComponent;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -64,6 +66,8 @@ public class Interfaz extends javax.swing.JFrame {
     private String estadoActual = "";
     private Stack<HashSet<String>> ultimosEstados = new Stack(); //pila de cjtos de estados
     private HashSet<String> estadosActuales = new HashSet();
+
+    ManejaGrafo grafica = new ManejaGrafo();
 
     /**
      * Creates new form Interfaz
@@ -139,6 +143,28 @@ public class Interfaz extends javax.swing.JFrame {
 
     }
 
+    public void actualizarGrafica() {
+        try {
+            mxGraphComponent grafica_generada;
+            if(tipoAFD.isSelected())
+                 grafica_generada = grafica.generarAFD(afd, cjtoEstados);
+            else
+                grafica_generada = grafica.generarAFND(afnd, cjtoEstados);
+            
+            //scroll.removeAll();
+            scroll.add(grafica_generada);
+            scroll.getViewport().add(grafica_generada);
+            scroll.revalidate();
+            scroll.repaint();
+
+        } catch (Exception ex) {
+            JOptionPane.showConfirmDialog(null, ex.getMessage(),
+                    "Error al generar grafica", JOptionPane.OK_OPTION,
+                    JOptionPane.ERROR_MESSAGE);
+        }
+
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -153,13 +179,11 @@ public class Interfaz extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaTransicion = new javax.swing.JTable();
         botonSimular = new javax.swing.JButton();
-        comboEjemplo = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         botonAddEstado = new javax.swing.JButton();
         textEstado = new javax.swing.JTextField();
         textSimbolo = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         comboOrigen = new javax.swing.JComboBox<>();
@@ -199,7 +223,7 @@ public class Interfaz extends javax.swing.JFrame {
         labelIteracion = new javax.swing.JLabel();
         labelFin = new javax.swing.JLabel();
         labelResultado = new javax.swing.JLabel();
-        botonGenerar = new javax.swing.JButton();
+        scroll = new javax.swing.JScrollPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SimAutomata - Víctor Roríguez y Fran Beltrán ");
@@ -248,9 +272,6 @@ public class Interfaz extends javax.swing.JFrame {
             }
         });
 
-        comboEjemplo.setFont(new java.awt.Font("Rockwell", 0, 12)); // NOI18N
-        comboEjemplo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Elegir" }));
-
         jLabel2.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
         jLabel2.setText("1) Definir símbolos de entrada");
 
@@ -277,9 +298,6 @@ public class Interfaz extends javax.swing.JFrame {
                 textSimboloActionPerformed(evt);
             }
         });
-
-        jLabel4.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
-        jLabel4.setText("Cargar ejemplo");
 
         jLabel5.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
         jLabel5.setText("Cargar fichero");
@@ -364,7 +382,7 @@ public class Interfaz extends javax.swing.JFrame {
         });
 
         jLabel10.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
-        jLabel10.setText("Eliminar transiciones seleccionadas");
+        jLabel10.setText("Eliminar transiciones");
 
         botonEliminarT.setText("Eliminar");
         botonEliminarT.addActionListener(new java.awt.event.ActionListener() {
@@ -478,12 +496,8 @@ public class Interfaz extends javax.swing.JFrame {
         labelResultado.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
         labelResultado.setText("RECONOCIDA");
 
-        botonGenerar.setText("GENERAR GRAFICA");
-        botonGenerar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                botonGenerarActionPerformed(evt);
-            }
-        });
+        scroll.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -491,208 +505,198 @@ public class Interfaz extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel10)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(botonEliminarT))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 333, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(botonLimpiar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel16)
+                                    .addComponent(jLabel15))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel7)
-                                            .addComponent(jLabel8)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(comboOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(comboSimbolo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addGap(4, 4, 4)
-                                                .addComponent(botonEstadosF)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(labelEstadosF))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addGap(3, 3, 3)
-                                                .addComponent(comboEstadoI, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(labelEstadoI))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addGap(7, 7, 7)
-                                                .addComponent(comboDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(botonDestinos)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(botonAddT))))
-                                    .addComponent(jLabel6)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(textCadena, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(botonSimular, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jLabel13)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel14)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(labelIteracion)))
-                                .addGap(0, 39, Short.MAX_VALUE))
+                                        .addComponent(textSimboloActual, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(9, 9, 9)
+                                        .addComponent(botonAnterior))
+                                    .addComponent(textEstadoActual, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(botonSiguiente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(botonIniciar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(labelFin)
+                                    .addComponent(labelResultado)))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel7)
+                                        .addComponent(jLabel8)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(comboOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(comboSimbolo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addGap(4, 4, 4)
+                                            .addComponent(botonEstadosF)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(labelEstadosF))
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addGap(3, 3, 3)
+                                            .addComponent(comboEstadoI, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addComponent(labelEstadoI))
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addGap(7, 7, 7)
+                                            .addComponent(comboDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(botonDestinos)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(botonAddT))))
+                                .addComponent(jLabel6)
+                                .addComponent(jLabel13)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel14)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(labelIteracion))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                    .addComponent(textCadena, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(botonSimular, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(textEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botonAddEstado)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botonEliminarEstado))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3)
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel9)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(tipoAFD)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(tipoAFND))
-                                    .addComponent(jLabel2)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(textSimbolo, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(botonAddSimbolo)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(botonEliminarSimbolo)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jLabel5)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                            .addComponent(botonCargar))
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jLabel4)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(comboEjemplo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                    .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel2))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                         .addComponent(jLabel12)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(botonGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel5)
+                                        .addGap(16, 16, 16)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(botonCargar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(botonGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(jLabel3)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel11)
+                                .addComponent(textSimbolo, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(botonLimpiar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel1)))
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel16)
-                            .addComponent(jLabel15))
+                                .addComponent(botonAddSimbolo)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(botonEliminarSimbolo)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(textSimboloActual, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(9, 9, 9)
-                                .addComponent(botonAnterior))
-                            .addComponent(textEstadoActual, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(botonSiguiente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(botonIniciar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labelFin)
-                            .addComponent(labelResultado))
-                        .addGap(70, 88, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(textEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(botonAddEstado)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(botonEliminarEstado)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(botonGenerar)
-                        .addGap(34, 34, 34))))
+                        .addComponent(scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1))
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(26, 26, 26)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 458, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel9)
-                                    .addComponent(tipoAFD)
-                                    .addComponent(tipoAFND))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(jLabel9)
+                                            .addComponent(tipoAFD)
+                                            .addComponent(tipoAFND))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(textSimbolo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(botonAddSimbolo)
+                                            .addComponent(botonEliminarSimbolo))
+                                        .addGap(7, 7, 7)
+                                        .addComponent(jLabel3)
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(botonAddEstado)
+                                            .addComponent(textEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(botonEliminarEstado))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel6)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(comboOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(comboDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(botonAddT)
+                                            .addComponent(comboSimbolo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(botonDestinos))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(jLabel7)
+                                            .addComponent(comboEstadoI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(labelEstadoI)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(jLabel5)
+                                            .addComponent(botonCargar))
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                            .addComponent(botonGuardar)
+                                            .addComponent(jLabel12))))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel2)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel8)
+                                    .addComponent(botonEstadosF)
+                                    .addComponent(labelEstadosF))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel13)
+                                .addGap(1, 1, 1)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(textCadena, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(botonSimular, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel14)
+                                    .addComponent(labelIteracion))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel15)
+                                    .addComponent(textEstadoActual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(botonIniciar)
+                                    .addComponent(labelFin))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(textSimbolo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(botonAddSimbolo)
-                                    .addComponent(botonEliminarSimbolo))
-                                .addGap(7, 7, 7)
-                                .addComponent(jLabel3)
-                                .addGap(14, 14, 14)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(botonAddEstado)
-                                    .addComponent(textEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(botonEliminarEstado)
-                                    .addComponent(botonGenerar))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel5)
-                                    .addComponent(botonCargar))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(comboEjemplo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel4))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(botonGuardar)
-                                    .addComponent(jLabel12))
-                                .addGap(86, 86, 86)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(comboOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(comboDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(botonAddT)
-                            .addComponent(comboSimbolo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(botonDestinos))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel7)
-                            .addComponent(comboEstadoI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(labelEstadoI))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel8)
-                            .addComponent(botonEstadosF)
-                            .addComponent(labelEstadosF))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel13)
-                        .addGap(1, 1, 1)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(textCadena, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(botonSimular, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel14)
-                            .addComponent(labelIteracion))
-                        .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel15)
-                            .addComponent(textEstadoActual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(botonIniciar)
-                            .addComponent(labelFin))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel16)
-                            .addComponent(textSimboloActual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(botonSiguiente)
-                            .addComponent(botonAnterior)
-                            .addComponent(labelResultado)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1)))
+                                    .addComponent(jLabel16)
+                                    .addComponent(textSimboloActual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(botonSiguiente)
+                                    .addComponent(botonAnterior)
+                                    .addComponent(labelResultado))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -721,12 +725,14 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_comboEstadoIActionPerformed
 
     private void botonAddEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAddEstadoActionPerformed
-        cjtoEstados.add(textEstado.getText());
-        comboOrigen.addItem(textEstado.getText());
-        comboDestino.addItem(textEstado.getText());
-        comboEstadoI.addItem(textEstado.getText());
+        if(!textEstado.getText().isBlank() && cjtoEstados.add(textEstado.getText())){ //Para evitar repetidos
+            comboOrigen.addItem(textEstado.getText());
+            comboDestino.addItem(textEstado.getText());
+            comboEstadoI.addItem(textEstado.getText());
 
-        actualizarTabla();
+            actualizarTabla();
+            actualizarGrafica();
+        }
     }//GEN-LAST:event_botonAddEstadoActionPerformed
 
     private void tipoAFDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoAFDActionPerformed
@@ -747,9 +753,11 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_tipoAFNDActionPerformed
 
     private void botonAddSimboloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAddSimboloActionPerformed
-        cjtoSimbolos.add(textSimbolo.getText());
-        comboSimbolo.addItem(textSimbolo.getText());
-        actualizarTabla();
+        if(!textSimbolo.getText().isBlank() && cjtoSimbolos.add(textSimbolo.getText()))
+        {
+            comboSimbolo.addItem(textSimbolo.getText());
+            actualizarTabla();
+        }
     }//GEN-LAST:event_botonAddSimboloActionPerformed
 
     private void botonAddTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAddTActionPerformed
@@ -759,19 +767,8 @@ public class Interfaz extends javax.swing.JFrame {
             afd.agregarTransicion(t);
             System.out.println("AÑADIDA TRANSICION:" + t);
         }
-//        else //Debemos desplegar una lista 
-//        {
-//            botonAddT.setVisible(false); //Se añade directamente con la ventana de 
-//            comboDestino.setVisible(false);
-//            JList listaDestinos = new JList();
-//            listaDestinos.setListData(this.cjtoEstados.toArray());
-//            Frame ventana = new Frame();
-//            ventana.setSize(100, 300);
-//            ventana.add(listaDestinos);
-//
-//            ventana.setVisible(true);
-//        }
         actualizarTabla();
+        actualizarGrafica();
     }//GEN-LAST:event_botonAddTActionPerformed
 
     private void botonEliminarSimboloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminarSimboloActionPerformed
@@ -862,6 +859,7 @@ public class Interfaz extends javax.swing.JFrame {
                 System.out.println("ESTADOS  \n" + cjtoEstados);
                 System.out.println("SIMBOLOS \n" + cjtoSimbolos);
                 this.actualizarTabla();
+                this.actualizarGrafica();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Error al cargar fichero", ex.getMessage(), JOptionPane.ERROR_MESSAGE);
             }
@@ -925,6 +923,7 @@ public class Interfaz extends javax.swing.JFrame {
 
         }
         actualizarTabla();
+        actualizarGrafica();
     }//GEN-LAST:event_botonDestinosActionPerformed
 
     private void botonLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonLimpiarActionPerformed
@@ -935,8 +934,18 @@ public class Interfaz extends javax.swing.JFrame {
         textSimboloActual.setText("");
         textCadena.setText("");
         textEstadoActual.setText("");
+        this.comboDestino.removeAllItems();
+        this.comboOrigen.removeAllItems();
+        this.comboSimbolo.removeAllItems();
+        this.comboEstadoI.removeAll();
+        this.comboOrigen.addItem("Origen");
+        this.comboSimbolo.addItem("Símbolo");
+        this.comboDestino.addItem("Destino");
+        if(this.tipoAFND.isSelected())
+            this.comboSimbolo.addItem("LAMBDA");
         vaciarTabla();
         actualizarTabla(); //Volver a pintar la tabla vacia
+        actualizarGrafica();
 
     }//GEN-LAST:event_botonLimpiarActionPerformed
 
@@ -961,13 +970,16 @@ public class Interfaz extends javax.swing.JFrame {
             if (tipoAFD.isSelected()) {
                 estadoI = afd.getEstadoInicial();
                 estadoActual = estadoI;
+                scroll.getViewport().add(grafica.simularAFD(afd, cjtoEstados, estadoActual));
             } else {
                 estadoI = afnd.getEstadoInicial();
                 estadosActuales.addAll(afnd.L_clausura(estadoI));
+                scroll.getViewport().add(grafica.simularAFND(afnd, cjtoEstados, estadosActuales));
             }
 
             textEstadoActual.setText(estadoI);
             textSimboloActual.setText(textCadena.getText().charAt(0) + ""); //caracter inicial
+
             botonIniciar.setText("Reiniciar");
         } else //Pulsa boton reiniciar
         {
@@ -984,6 +996,10 @@ public class Interfaz extends javax.swing.JFrame {
             botonIniciar.setText("Iniciar");
             botonSiguiente.setEnabled(false);
             botonAnterior.setEnabled(false);
+            if(tipoAFD.isSelected())
+                    scroll.getViewport().add(grafica.simularAFD(afd, cjtoEstados, estadoActual)); //reiniciamos la vista del grafo
+            else
+                scroll.getViewport().add(grafica.simularAFND(afnd, cjtoEstados, estadosActuales));
         }
     }//GEN-LAST:event_botonIniciarActionPerformed
 
@@ -995,11 +1011,13 @@ public class Interfaz extends javax.swing.JFrame {
             ultimoEstado.push(estadoActual);
             estadoActual = afd.getTransicion(estadoActual, textCadena.getText().charAt(indiceCadena));
             textEstadoActual.setText(estadoActual);
+            scroll.getViewport().add(grafica.simularAFD(afd, cjtoEstados, estadoActual));
         } else {
             ultimosEstados.push(estadosActuales);
             estadosActuales = afnd.getTransicion(estadosActuales, textCadena.getText().charAt(indiceCadena));
             estadosActuales = afnd.L_clausura(estadosActuales);
             textEstadoActual.setText(estadosActuales.toString());
+            scroll.getViewport().add(grafica.simularAFND(afnd, cjtoEstados, estadosActuales));
         }
         indiceCadena++;
         if (indiceCadena == textCadena.getText().length()) //Fin de cadena
@@ -1016,13 +1034,10 @@ public class Interfaz extends javax.swing.JFrame {
                 labelResultado.setText("NO RECONOCIDA");
             }
             labelResultado.setVisible(true);
-        } 
-        else
-        {
+        } else {
             textSimboloActual.setText(textCadena.getText().charAt(indiceCadena) + "");
-             labelIteracion.setText("Iteración: " + (indiceCadena + 1));
-        }        
-       
+            labelIteracion.setText("Iteración: " + (indiceCadena + 1));
+        }
 
 
     }//GEN-LAST:event_botonSiguienteActionPerformed
@@ -1032,70 +1047,25 @@ public class Interfaz extends javax.swing.JFrame {
         labelResultado.setVisible(false);
         labelFin.setVisible(false);
         botonSiguiente.setEnabled(true);
-        labelIteracion.setText("Iteración: "+(indiceCadena+1));
+        labelIteracion.setText("Iteración: " + (indiceCadena + 1));
 
         if (tipoAFD.isSelected()) {
             estadoActual = ultimoEstado.pop();
             textEstadoActual.setText(estadoActual);
+            scroll.getViewport().add(grafica.simularAFD(afd, cjtoEstados, estadoActual));
         } else {
             estadosActuales = ultimosEstados.pop();
             textEstadoActual.setText(ultimosEstados.toString());
+            scroll.getViewport().add(grafica.simularAFND(afnd, cjtoEstados, estadosActuales));
         }
         textSimboloActual.setText(textCadena.getText().charAt(indiceCadena) + "");
 
-        if (indiceCadena == 0)
+        if (indiceCadena == 0) {
             botonAnterior.setEnabled(false);
-        
+        }
+
     }//GEN-LAST:event_botonAnteriorActionPerformed
 
-    private void botonGenerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonGenerarActionPerformed
-        Grafica grafica = new Grafica();
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        
-        //JPanel panel = new JPanel();
-       
-        //panel.setPreferredSize(new Dimension(50,50));
-        try {
-            if(tipoAFD.isSelected())
-                scrollPane.setViewportView(grafica.generarAFD(afd, cjtoEstados));
-            else
-                scrollPane.setViewportView(grafica.generarAFND(afnd, cjtoEstados));
-        } catch (Exception ex) {
-            JOptionPane.showConfirmDialog(null, ex.getMessage(),
-                "Error al generar grafica", JOptionPane.OK_OPTION,
-                JOptionPane.ERROR_MESSAGE);
-            ex.printStackTrace();
-        }
- 
-        
-        //final JOptionPane OptionPane = new JOptionPane(panel);
-        //final JDialog dialog = OptionPane.createDialog((JFrame)null, "REPRESENTACION GRAFICA");
-        JDialog dialog = new JDialog();
-        dialog.getContentPane().setLayout(new BorderLayout(0, 0));
-        dialog.getContentPane().add(scrollPane,BorderLayout.CENTER);
-        dialog.setBounds(0, 0, 100, this.getHeight());
-
- 
-        dialog.setLocationRelativeTo(this);
-        dialog.setLocation(dialog.getLocation().x+580, dialog.getLocation().y);
-        dialog.setModal(false);
-        dialog.setAlwaysOnTop(true);
-        dialog.setTitle("REPRESENTACION GRAFICA");
-        dialog.setSize(300,this.getHeight());
-//        dialog.setMaximumSize(new Dimension(900,500));
-        dialog.setVisible(true);
-
-        
-//        JOptionPane.showConfirmDialog(null, panel,
-//                "grAFICA", JOptionPane.OK_OPTION,
-//                JOptionPane.PLAIN_MESSAGE);
-    }//GEN-LAST:event_botonGenerarActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -1110,13 +1080,17 @@ public class Interfaz extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Interfaz.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Interfaz.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Interfaz.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Interfaz.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Interfaz.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Interfaz.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Interfaz.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Interfaz.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
@@ -1142,7 +1116,6 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JButton botonEliminarSimbolo;
     private javax.swing.JButton botonEliminarT;
     private javax.swing.JButton botonEstadosF;
-    private javax.swing.JButton botonGenerar;
     private javax.swing.JButton botonGuardar;
     private javax.swing.JButton botonIniciar;
     private javax.swing.JButton botonLimpiar;
@@ -1150,7 +1123,6 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JButton botonSimular;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> comboDestino;
-    private javax.swing.JComboBox<String> comboEjemplo;
     private javax.swing.JComboBox<String> comboEstadoI;
     private javax.swing.JComboBox<String> comboOrigen;
     private javax.swing.JComboBox<String> comboSimbolo;
@@ -1164,7 +1136,6 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -1176,6 +1147,7 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JLabel labelFin;
     private javax.swing.JLabel labelIteracion;
     private javax.swing.JLabel labelResultado;
+    private javax.swing.JScrollPane scroll;
     private javax.swing.JTable tablaTransicion;
     private javax.swing.JTextField textCadena;
     private javax.swing.JTextField textEstado;
