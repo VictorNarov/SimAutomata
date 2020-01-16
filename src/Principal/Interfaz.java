@@ -146,11 +146,12 @@ public class Interfaz extends javax.swing.JFrame {
     public void actualizarGrafica() {
         try {
             mxGraphComponent grafica_generada;
-            if(tipoAFD.isSelected())
-                 grafica_generada = grafica.generarAFD(afd, cjtoEstados);
-            else
+            if (tipoAFD.isSelected()) {
+                grafica_generada = grafica.generarAFD(afd, cjtoEstados);
+            } else {
                 grafica_generada = grafica.generarAFND(afnd, cjtoEstados);
-            
+            }
+
             //scroll.removeAll();
             scroll.add(grafica_generada);
             scroll.getViewport().add(grafica_generada);
@@ -331,7 +332,6 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel7.setText("4) Definir estado inicial");
 
         comboEstadoI.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
-        comboEstadoI.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "q0" }));
         comboEstadoI.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboEstadoIActionPerformed(evt);
@@ -716,16 +716,19 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_textSimboloActionPerformed
 
     private void comboEstadoIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboEstadoIActionPerformed
-        if (tipoAFD.isSelected()) {
-            afd.setEstadoInicial(comboEstadoI.getSelectedItem().toString());
-        } else {
-            afnd.setEstadoInicial(comboEstadoI.getSelectedItem().toString());
+        if (comboEstadoI.getItemCount()>0) {
+            if (tipoAFD.isSelected()) {
+                afd.setEstadoInicial(comboEstadoI.getSelectedItem().toString());
+            } else {
+                afnd.setEstadoInicial(comboEstadoI.getSelectedItem().toString());
+            }
+            labelEstadoI.setText("Estado inicial: " + comboEstadoI.getSelectedItem().toString());
+            actualizarGrafica();
         }
-        labelEstadoI.setText("Estado inicial: " + comboEstadoI.getSelectedItem().toString());
     }//GEN-LAST:event_comboEstadoIActionPerformed
 
     private void botonAddEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAddEstadoActionPerformed
-        if(!textEstado.getText().isBlank() && cjtoEstados.add(textEstado.getText())){ //Para evitar repetidos
+        if (!textEstado.getText().isBlank() && cjtoEstados.add(textEstado.getText())) { //Para evitar repetidos
             comboOrigen.addItem(textEstado.getText());
             comboDestino.addItem(textEstado.getText());
             comboEstadoI.addItem(textEstado.getText());
@@ -740,6 +743,7 @@ public class Interfaz extends javax.swing.JFrame {
         comboSimbolo.removeItem("LAMBDA");
         botonDestinos.setVisible(false);
         comboDestino.setVisible(true);
+        this.botonAddT.setVisible(true);
         actualizarTabla();
     }//GEN-LAST:event_tipoAFDActionPerformed
 
@@ -753,8 +757,7 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_tipoAFNDActionPerformed
 
     private void botonAddSimboloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAddSimboloActionPerformed
-        if(!textSimbolo.getText().isBlank() && cjtoSimbolos.add(textSimbolo.getText()))
-        {
+        if (!textSimbolo.getText().isBlank() && cjtoSimbolos.add(textSimbolo.getText())) {
             comboSimbolo.addItem(textSimbolo.getText());
             actualizarTabla();
         }
@@ -882,6 +885,7 @@ public class Interfaz extends javax.swing.JFrame {
             }
 
             labelEstadosF.setText("Estados finales: " + pE.getEstados());
+            actualizarGrafica();
         }
 
     }//GEN-LAST:event_botonEstadosFActionPerformed
@@ -934,15 +938,19 @@ public class Interfaz extends javax.swing.JFrame {
         textSimboloActual.setText("");
         textCadena.setText("");
         textEstadoActual.setText("");
+        labelEstadoI.setText("Estado inicial: NO SELECCIONADO");
+        labelEstadosF.setText("Estados finales: NO SELECCIONADOS");
         this.comboDestino.removeAllItems();
         this.comboOrigen.removeAllItems();
         this.comboSimbolo.removeAllItems();
-        this.comboEstadoI.removeAll();
+        this.comboEstadoI.removeAllItems();
+
         this.comboOrigen.addItem("Origen");
         this.comboSimbolo.addItem("Símbolo");
         this.comboDestino.addItem("Destino");
-        if(this.tipoAFND.isSelected())
+        if (this.tipoAFND.isSelected()) {
             this.comboSimbolo.addItem("LAMBDA");
+        }
         vaciarTabla();
         actualizarTabla(); //Volver a pintar la tabla vacia
         actualizarGrafica();
@@ -996,10 +1004,11 @@ public class Interfaz extends javax.swing.JFrame {
             botonIniciar.setText("Iniciar");
             botonSiguiente.setEnabled(false);
             botonAnterior.setEnabled(false);
-            if(tipoAFD.isSelected())
-                    scroll.getViewport().add(grafica.simularAFD(afd, cjtoEstados, estadoActual)); //reiniciamos la vista del grafo
-            else
+            if (tipoAFD.isSelected()) {
+                scroll.getViewport().add(grafica.simularAFD(afd, cjtoEstados, estadoActual)); //reiniciamos la vista del grafo
+            } else {
                 scroll.getViewport().add(grafica.simularAFND(afnd, cjtoEstados, estadosActuales));
+            }
         }
     }//GEN-LAST:event_botonIniciarActionPerformed
 
