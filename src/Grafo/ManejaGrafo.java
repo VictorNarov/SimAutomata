@@ -23,6 +23,7 @@ import Automata.TransicionAFND;
 import Automata.TransicionL;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.mxIGraphLayout;
+import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxStylesheet;
@@ -41,6 +42,13 @@ public class ManejaGrafo {
     ArrayList<String> estados = new ArrayList<>();
     ArrayList<Object> objEstados = new ArrayList<>();
 
+    /**
+     * Genera la representación grafica del AFD
+     * @param automata
+     * @param cjtoEstados
+     * @return objeto mxGraphComponent para su representación gráfica
+     * @throws Exception
+     */
     public mxGraphComponent generarAFD(AFD automata, HashSet<String> cjtoEstados) throws Exception {
         objEstados.clear();
         estados.clear();
@@ -73,36 +81,32 @@ public class ManejaGrafo {
 
         } finally {
             grafo.getModel().endUpdate();
+        }     
+        
+        double width = grafo.getGraphBounds().getWidth();
+        double height = grafo.getGraphBounds().getHeight();
+        
+        if(width>487){
+            width = 500;
         }
+        
+        if(height> 440){
+            height = 440;
+        }
+        grafo.getModel().setGeometry(grafo.getDefaultParent(), new mxGeometry(250-(width)/2, 220-(height)/2,0, 0));
 
         return new mxGraphComponent(grafo);
 
-//        double width = grafo.getGraphBounds().getWidth();
-//        double height = grafo.getGraphBounds().getHeight();
-//        
-//        if(width>487){
-//            width = 500;
-//        }
-//        
-//        if(height> 440){
-//            height = 440;
-//        }
-//        grafo.getModel().setGeometry(grafo.getDefaultParent(), new mxGeometry(250-(width)/2, 220-(height)/2,0, 0));
 
-
-//        double width = grafo.getGraphBounds().getWidth();
-//        double height = grafo.getGraphBounds().getHeight();
-//
-//        if (width > 560) {
-//            width = 560;
-//        }
-//
-//        if (height > 450) {
-//            height = 450;
-//        }
-//        grafo.getModel().setGeometry(grafo.getDefaultParent(), new mxGeometry(280 - (width) / 2, 225 - (height) / 2, 0, 0));
     }
 
+    /**
+     * Genera la representación gráfica del AFND
+     * @param automata
+     * @param cjtoEstados
+     * @return objeto mxGraphComponent para su representación gráfica
+     * @throws Exception
+     */
     public mxGraphComponent generarAFND(AFND automata, HashSet<String> cjtoEstados) throws Exception {
         objEstados.clear();
         estados.clear();
@@ -153,6 +157,13 @@ public class ManejaGrafo {
         return new mxGraphComponent(grafo);
     }
     
+    /**
+     * Genera la representación gráfica del AFD dada una situación de estados activos
+     * @param automata
+     * @param cjtoEstados
+     * @param estadoActivo
+     * @return objeto mxGraphComponent para su representación gráfica
+     */
     public mxGraphComponent simularAFD(AFD automata, HashSet<String> cjtoEstados, String estadoActivo)
     {
         objEstados.clear();
@@ -195,8 +206,14 @@ public class ManejaGrafo {
         return new mxGraphComponent(grafo);
     }
 
-    
-        public mxGraphComponent simularAFND(AFND automata, HashSet<String> cjtoEstados, HashSet<String> estadosActivos){
+    /**
+     * Genera la representación gráfica del AFND dada una situación de estados activos
+     * @param automata
+     * @param cjtoEstados
+     * @param estadosActivos
+     * @return objeto mxGraphComponent para su representación gráfica
+     */
+    public mxGraphComponent simularAFND(AFND automata, HashSet<String> cjtoEstados, HashSet<String> estadosActivos){
         objEstados.clear();
         estados.clear();
         grafo = new Grafo();

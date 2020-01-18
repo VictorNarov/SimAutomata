@@ -20,36 +20,62 @@ import java.util.Objects;
 
 /**
  *
- * @author usuario
+ * @author Víctor M. Rodríguez y Fran J. Beltrán
  */
 public class TransicionAFD {
     private String estadoO;
     private String estadoD;
     private char simbolo;
     
+    /**
+     * Crea la transición con los parámetros indicados
+     * @param e1 Estado origen
+     * @param simbolo Símbolo de entrada
+     * @param e2 Estado destino
+     */
     public TransicionAFD(String e1, char simbolo, String e2) {
         this.estadoO = e1;
         this.estadoD = e2;
         this.simbolo = simbolo;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getEstadoO() {
         return estadoO;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getEstadoD() {
         return estadoD;
     }
 
+    /**
+     *
+     * @return
+     */
     public char getSimbolo() {
         return simbolo;
     }
     
+    /**
+     *
+     * @return
+     */
     @Override
     public String toString() {
         return (" " + this.estadoO + " '" + this.simbolo + "' " + this.estadoD);
     }
 
+    /**
+     * Devuvelve el código hash del objeto, usado para ser comparado con otro objeto en colecciones (HashSet, HashMap..)
+     * @return
+     */
     @Override
     public int hashCode() {
         int hash = 7;
@@ -59,6 +85,11 @@ public class TransicionAFD {
         return hash;
     }
 
+    /**
+     * Devuelve verdadero si la transición pasada por parámetro equivale a la que invoca el método
+     * @param obj
+     * @return
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -74,7 +105,7 @@ public class TransicionAFD {
         if (this.simbolo != other.simbolo) {
             return false;
         }
-        if (!Objects.equals(this.estadoO, other.estadoO)) {
+        if (!Objects.equals(this.estadoO, other.estadoO)) { //Además nos fijamos en los estado origen y destino
             return false;
         }
         if (!Objects.equals(this.estadoD, other.estadoD)) {

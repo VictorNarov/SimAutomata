@@ -17,7 +17,7 @@
 package Principal;
 
 /**
- *
+ * Interface que implementan los AFD y AFND
  * @author usuario
  */
 public interface Proceso {

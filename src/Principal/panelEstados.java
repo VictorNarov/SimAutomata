@@ -32,12 +32,21 @@ public class panelEstados extends javax.swing.JPanel {
         initComponents();
     }
     
+    /**
+     * Rellena la lista de estados mostrada gráficamente
+     * @param estados
+     */
     public void setEstados(HashSet<String> estados)
     {
         DefaultListModel modeloLista = new DefaultListModel();
         modeloLista.addAll(estados);
         lista.setModel(modeloLista);
     }
+
+    /**
+     * Obtiene los estados seleccionados de la lista mostrada al usuario
+     * @return
+     */
     public HashSet<String> getEstados()
     {
         HashSet<String> estadosSel = new HashSet();

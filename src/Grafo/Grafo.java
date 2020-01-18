@@ -28,6 +28,9 @@ import java.util.Map;
  */
 public class Grafo extends mxGraph{
 
+    /**
+     * Crea el objeto grafo, que hereda de mxGraph y establece su configuración estética 
+     */
     public Grafo() {
         super();
         

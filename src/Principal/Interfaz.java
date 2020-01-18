@@ -97,6 +97,9 @@ public class Interfaz extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Actualiza la tabla de transiciones según haya sido modificada a través de la interfaz
+     */
     public void actualizarTabla() {
         //TODO: editar nombre estados, si es incial -> delante y si es final * delante
         vaciarTabla();
@@ -143,6 +146,9 @@ public class Interfaz extends javax.swing.JFrame {
 
     }
 
+    /**
+     * Actualiza la representación gráfica del autómata según su situación
+     */
     public void actualizarGrafica() {
         try {
             mxGraphComponent grafica_generada;
@@ -966,6 +972,9 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_textCadenaActionPerformed
 
     private void botonIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonIniciarActionPerformed
+        
+        //TODO: ARREGLAR PARA AFND CON CADENAS VACIAS
+        
         if (textCadena.getText().equals("")) //Si la cadena esta vacia
             JOptionPane.showMessageDialog(this, "Error: cadena vacia", "Error", JOptionPane.ERROR_MESSAGE);
 
@@ -1075,6 +1084,10 @@ public class Interfaz extends javax.swing.JFrame {
 
     }//GEN-LAST:event_botonAnteriorActionPerformed
 
+    /**
+     * Muestra y ejecuta la interfaz
+     * @param args
+     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
