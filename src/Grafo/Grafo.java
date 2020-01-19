@@ -23,17 +23,18 @@ import java.util.Hashtable;
 import java.util.Map;
 
 /**
- *
- * @author victo
+ * Clase Grafo. Hereda de mxGraph.
+ * @author Víctor M. Rodríguez y Fran J. Beltrán
  */
-public class Grafo extends mxGraph{
+public class Grafo extends mxGraph {
 
     /**
-     * Crea el objeto grafo, que hereda de mxGraph y establece su configuración estética 
+     * Crea el objeto grafo, que hereda de mxGraph y establece su configuración
+     * estética
      */
     public Grafo() {
         super();
-        
+
         Hashtable<String, Object> estiloEstado = new Hashtable<>();
         estiloEstado.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
         estiloEstado.put(mxConstants.STYLE_FONTSIZE, 20);
@@ -46,7 +47,7 @@ public class Grafo extends mxGraph{
         Hashtable<String, Object> estiloEInicial = new Hashtable<String, Object>();
         estiloEInicial.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_DOUBLE_ELLIPSE);
         estiloEInicial.put(mxConstants.STYLE_FONTSIZE, 20);
-        estiloEInicial.put(mxConstants.STYLE_FILLCOLOR, "white");       
+        estiloEInicial.put(mxConstants.STYLE_FILLCOLOR, "white");
 
         Map<String, Object> edgeStyle = new HashMap<String, Object>();
         edgeStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CONNECTOR);
@@ -66,6 +67,5 @@ public class Grafo extends mxGraph{
         this.setVertexLabelsMovable(false);
         this.setEdgeLabelsMovable(false);
     }
-    
-    
+
 }

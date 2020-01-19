@@ -20,8 +20,8 @@ import java.util.HashSet;
 import javax.swing.DefaultListModel;
 
 /**
- *
- * @author victo
+ * Clase Panel. Mostrará los distintos estados del autómata.
+ * @author Víctor M. Rodríguez y Fran J. Beltrán
  */
 public class panelEstados extends javax.swing.JPanel {
     

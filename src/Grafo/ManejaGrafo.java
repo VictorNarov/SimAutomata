@@ -22,7 +22,6 @@ import Automata.TransicionAFD;
 import Automata.TransicionAFND;
 import Automata.TransicionL;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
-import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
@@ -31,8 +30,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
- *
- * @author victo
+ * Clase ManejaGrafo. Se encarga de facilitar el uso del grafo.
+ * @author Víctor M. Rodríguez y Fran J. Beltrán
  */
 public class ManejaGrafo {
 
@@ -44,8 +43,8 @@ public class ManejaGrafo {
 
     /**
      * Genera la representación grafica del AFD
-     * @param automata
-     * @param cjtoEstados
+     * @param automata Automata pasado por parametro
+     * @param cjtoEstados Conjunto de estados
      * @return objeto mxGraphComponent para su representación gráfica
      * @throws Exception
      */
@@ -102,8 +101,8 @@ public class ManejaGrafo {
 
     /**
      * Genera la representación gráfica del AFND
-     * @param automata
-     * @param cjtoEstados
+     * @param automata Automata pasado por parametro
+     * @param cjtoEstados Conjunto de estados
      * @return objeto mxGraphComponent para su representación gráfica
      * @throws Exception
      */

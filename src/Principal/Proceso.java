@@ -18,7 +18,7 @@ package Principal;
 
 /**
  * Interface que implementan los AFD y AFND
- * @author usuario
+ * @author Víctor M. Rodríguez y Fran J. Beltrán
  */
 public interface Proceso {
     public abstract boolean esFinal(String estado); // True si estado es un estado final

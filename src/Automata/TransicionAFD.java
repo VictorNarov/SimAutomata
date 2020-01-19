@@ -19,16 +19,20 @@ package Automata;
 import java.util.Objects;
 
 /**
+ * Clase TransicionAFD. Los estados son cadenas de caracteres (String). El
+ * símbolo de entrada es un caracter (Character).
  *
  * @author Víctor M. Rodríguez y Fran J. Beltrán
  */
 public class TransicionAFD {
+
     private String estadoO;
     private String estadoD;
     private char simbolo;
-    
+
     /**
      * Crea la transición con los parámetros indicados
+     *
      * @param e1 Estado origen
      * @param simbolo Símbolo de entrada
      * @param e2 Estado destino
@@ -40,7 +44,7 @@ public class TransicionAFD {
     }
 
     /**
-     *
+     * Devuelve el estado de origen de la transicion
      * @return
      */
     public String getEstadoO() {
@@ -48,7 +52,7 @@ public class TransicionAFD {
     }
 
     /**
-     *
+     * Devuelve el estado de destino de la transicion
      * @return
      */
     public String getEstadoD() {
@@ -56,15 +60,15 @@ public class TransicionAFD {
     }
 
     /**
-     *
+     * Devuelve el simbolo de la transicion
      * @return
      */
     public char getSimbolo() {
         return simbolo;
     }
-    
+
     /**
-     *
+     * Permite la representación en texto de la transicion 
      * @return
      */
     @Override
@@ -73,7 +77,9 @@ public class TransicionAFD {
     }
 
     /**
-     * Devuvelve el código hash del objeto, usado para ser comparado con otro objeto en colecciones (HashSet, HashMap..)
+     * Devuvelve el código hash del objeto, usado para ser comparado con otro
+     * objeto en colecciones (HashSet, HashMap..)
+     *
      * @return
      */
     @Override
@@ -86,7 +92,9 @@ public class TransicionAFD {
     }
 
     /**
-     * Devuelve verdadero si la transición pasada por parámetro equivale a la que invoca el método
+     * Devuelve verdadero si la transición pasada por parámetro equivale a la
+     * que invoca el método
+     *
      * @param obj
      * @return
      */
@@ -113,8 +121,5 @@ public class TransicionAFD {
         }
         return true;
     }
-    
-    
-    
-    
+
 }

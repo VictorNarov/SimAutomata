@@ -15,24 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package Automata;
+
 import Automata.TransicionAFD;
 import Principal.Proceso;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
- * Clase Autómata Finito Determinista
- * Los estados son cadenas de caracteres (String)
- * Los símbolos de entrada son caracteres (Character)
- * No resulta necesario implementar un conjunto de estados del autómata para su funcionamiento
- * Tan solo necesita un conjunto de símbolos de entrada y de transiciones de estados, así como un estado inicial y un conjunto de estados finales.
+ * Clase Autómata Finito Determinista. Los estados son cadenas de caracteres
+ * (String). Los símbolos de entrada son caracteres (Character). No resulta
+ * necesario implementar un conjunto de estados del autómata para su
+ * funcionamiento. Tan solo necesita un conjunto de símbolos de entrada y de
+ * transiciones de estados, así como un estado inicial y un conjunto de estados
+ * finales.
+ *
  * @author Víctor M. Rodríguez y Fran J. Beltrán
  */
 public class AFD implements Cloneable, Proceso {
+
     private HashSet<String> estadosFinales;
     private String estadoInicial = "";
     private HashSet<TransicionAFD> transiciones;
-    
+
     /**
      * Constructor
      */
@@ -40,9 +43,10 @@ public class AFD implements Cloneable, Proceso {
         this.transiciones = new HashSet();
         this.estadosFinales = new HashSet();
     }
-    
+
     /**
      * Agrega la transición al autómata
+     *
      * @param e1 Estado origen
      * @param simbolo Símbolo de entrada
      * @param e2 Estado destino
@@ -50,32 +54,36 @@ public class AFD implements Cloneable, Proceso {
     public void agregarTransicion(String e1, char simbolo, String e2) {
         this.transiciones.add(new TransicionAFD(e1, simbolo, e2));
     }
-    
+
     /**
      * Agrega la transición pasada por parámetro al autómata
+     *
      * @param trans
      */
     public void agregarTransicion(TransicionAFD trans) {
         this.transiciones.add(trans);
     }
-    
+
     /**
      * Obtiene el estado destino de una transición del autómata
+     *
      * @param estado Estado origen
      * @param simbolo Símbolo de entrada
      * @return Estado destino
      */
     public String getTransicion(String estado, char simbolo) {
-        for(TransicionAFD t : this.transiciones) {
-            if(t.getEstadoO().equals(estado) && t.getSimbolo() == simbolo)
+        for (TransicionAFD t : this.transiciones) {
+            if (t.getEstadoO().equals(estado) && t.getSimbolo() == simbolo) {
                 return t.getEstadoD();
+            }
         }
-        
+
         return "";
     }
 
     /**
      * Obtiene el estado inicial del autómata
+     *
      * @return
      */
     public String getEstadoInicial() {
@@ -84,6 +92,7 @@ public class AFD implements Cloneable, Proceso {
 
     /**
      * Establece el estado inicial del autómata
+     *
      * @param estadoInicial
      */
     public void setEstadoInicial(String estadoInicial) {
@@ -92,6 +101,7 @@ public class AFD implements Cloneable, Proceso {
 
     /**
      * Establece los estados finales del autómata (1...N)
+     *
      * @param estadosFinales
      */
     public void setEstadosFinales(HashSet<String> estadosFinales) {
@@ -100,6 +110,7 @@ public class AFD implements Cloneable, Proceso {
 
     /**
      * Obtiene el conjunto de estados finales del autómata
+     *
      * @return
      */
     public HashSet<String> getEstadosFinales() {
@@ -108,22 +119,26 @@ public class AFD implements Cloneable, Proceso {
 
     /**
      * Obtiene el conjunto de transiciones del autómata
+     *
      * @return
      */
     public HashSet<TransicionAFD> getTransiciones() {
         return transiciones;
     }
-    
+
     /**
      * Agrega el estado final pasado por parámetro al autómata
+     *
      * @param estadoFinal
      */
     public void addEstadoFinal(String estadoFinal) {
         this.estadosFinales.add(estadoFinal);
     }
-    
+
     /**
-     * Devuelve verdadero si el estado final pasado por parámetro pertenece al conjunto de estados finales del autómata
+     * Devuelve verdadero si el estado final pasado por parámetro pertenece al
+     * conjunto de estados finales del autómata
+     *
      * @param estado
      * @return
      */
@@ -131,145 +146,155 @@ public class AFD implements Cloneable, Proceso {
     public boolean esFinal(String estado) {
         return this.estadosFinales.contains(estado);
     }
-    
+
     /**
      * Elimina el símbolo de entrada pasado por parámetro del autómata
+     *
      * @param s símbolo de entrada a eliminar
      */
     public void eliminarSimbolo(char s) //Elimina las transiciones que usan ese simbolo
     {
-        for(TransicionAFD t : this.transiciones)
-            if(t.getSimbolo()==s)
+        for (TransicionAFD t : this.transiciones) {
+            if (t.getSimbolo() == s) {
                 this.transiciones.remove(t);
+            }
+        }
     }
-            
+
     /**
      * Elimina el estado pasado por parámetro del autómata
+     *
      * @param e Estado a eliminar
      */
     public void eliminarEstado(String e) //Eliminar las transiciones que usan ese estado
     {
-        HashSet<TransicionAFD> eliminar = new HashSet(); 
-        for(TransicionAFD t : this.transiciones)
-            if(t.getEstadoO().equals(e) || t.getEstadoD().equals(e)) //Si aparece en el origen o destino de una transicion
+        HashSet<TransicionAFD> eliminar = new HashSet();
+        for (TransicionAFD t : this.transiciones) {
+            if (t.getEstadoO().equals(e) || t.getEstadoD().equals(e)) //Si aparece en el origen o destino de una transicion
+            {
                 eliminar.add(t);    //La eliminamos
-        
+            }
+        }
         this.transiciones.removeAll(eliminar);
     }
-    
+
     /**
+     * Elimina la transición pasada por parámetro
      *
-     * @param t
+     * @param t Transición a eliminar
      */
-    public void eliminarTransicion(TransicionAFD t)
-    {
+    public void eliminarTransicion(TransicionAFD t) {
         this.transiciones.remove(t);
     }
 
     /**
-     * Simula el funcionamiento del autómata
-     * Recorre la cadena de entrada y evoluciona el estado actual según lo definido en las transiciones del autómata
-     * Si el estado al que evolucion al leer el último símbolo de entrada de la cadena es un estado final, la cadena es reconocida
+     * Simula el funcionamiento del autómata Recorre la cadena de entrada y
+     * evoluciona el estado actual según lo definido en las transiciones del
+     * autómata Si el estado al que evolucion al leer el último símbolo de
+     * entrada de la cadena es un estado final, la cadena es reconocida
+     *
      * @param cadena Símbolos de entrada a reconocer por el autómata
-     * @return verdadero si la cadena es reconocida por el autómata (pertenece a su lenguaje formado)
+     * @return verdadero si la cadena es reconocida por el autómata (pertenece a
+     * su lenguaje formado)
      */
     @Override
     public boolean reconocer(String cadena) {
         char[] simbolo = cadena.toCharArray();
         String estado = this.getEstadoInicial();
-        
+
         for (int i = 0; i < simbolo.length; i++) {
-            estado = getTransicion(estado,simbolo[i]);
+            estado = getTransicion(estado, simbolo[i]);
         }
-        
+
         return esFinal(estado);
     }
-    
+
     /**
      * Permite la representación en texto del autómata
-     * @return 
+     *
+     * @return
      */
     @Override
     public String toString() {
-        String mensaje="";
+        String mensaje = "";
         HashSet<String> estados = new HashSet();
-        
-        mensaje+="ESTADOS\n";
-        
-        for(TransicionAFD t : this.transiciones)
-        {
+
+        mensaje += "ESTADOS\n";
+
+        for (TransicionAFD t : this.transiciones) {
             estados.add(t.getEstadoO());
             estados.add(t.getEstadoD());
         }
-        
-        mensaje+="ESTADO INICIAL: "+this.estadoInicial+"\n";
-        mensaje+="ESTADOS FINALES: \n";
-        for(String e : estadosFinales)
-        {
-            mensaje+=e;
+
+        mensaje += "ESTADO INICIAL: " + this.estadoInicial + "\n";
+        mensaje += "ESTADOS FINALES: \n";
+        for (String e : estadosFinales) {
+            mensaje += e;
         }
-        
-        for(String e : estados)
-        {
+
+        for (String e : estados) {
             mensaje += e + "\n";
         }
-        
-        mensaje+="\nTRANSICIONES:\n";
-        for(TransicionAFD t : this.transiciones) {
+
+        mensaje += "\nTRANSICIONES:\n";
+        for (TransicionAFD t : this.transiciones) {
             mensaje += t + "\n";
         }
-        
+
         return mensaje;
     }
-    
+
     /**
      * Simula un AFD
+     *
      * @param args
      */
     public static void main(String[] args) {
         AFD automata = new AFD();
-        
+
         automata.estadosFinales.add("q1");
-        
+
         automata.agregarTransicion("q0", '1', "q0");
         automata.agregarTransicion("q0", '0', "q2");
         automata.agregarTransicion("q2", '0', "q2");
         automata.agregarTransicion("q2", '1', "q1");
         automata.agregarTransicion("q1", '0', "q1");
         automata.agregarTransicion("q1", '1', "q1");
-        
+
         System.out.println(automata);
-        
-        if(automata.reconocer("101"))
+
+        if (automata.reconocer("101")) {
             System.out.println("RECONOCIDO");
-        else
+        } else {
             System.out.println("NO RECONOCIDO");
+        }
     }
-    
-        /**
-     * Devuelve una copia del autómata
-     * Se crean nuevos objetos, no se clonan las referencias
+
+    /**
+     * Devuelve una copia del autómata. Se crean nuevos objetos, no se clonan las
+     * referencias
+     *
      * @return
      */
     @Override
-    public Object clone()
-    {
-        AFD copia=null;
-        try{
-            copia =(AFD)super.clone(); //Hace una copia binaria de los objetos
-        }catch(CloneNotSupportedException ex)
-        {
+    public Object clone() {
+        AFD copia = null;
+        try {
+            copia = (AFD) super.clone(); //Hace una copia binaria de los objetos
+        } catch (CloneNotSupportedException ex) {
             System.out.println("Clone no soportado");
         }
         //Como el clone de HashSet hace solo una copia superficial, tenemos que copia a mano los elementos
         copia.estadosFinales = new HashSet<String>();
-        for(String estado : this.estadosFinales)
+        for (String estado : this.estadosFinales) {
             copia.estadosFinales.add(estado);
+        }
 
         copia.transiciones = new HashSet<TransicionAFD>();
-        for(TransicionAFD t : this.transiciones)
+        for (TransicionAFD t : this.transiciones) {
             copia.transiciones.add(t);
-        
+        }
+
         return copia;
     }
 }

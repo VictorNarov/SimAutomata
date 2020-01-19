@@ -21,35 +21,25 @@ import Automata.AFD;
 import Automata.TransicionAFD;
 import Automata.TransicionAFND;
 import Automata.TransicionL;
+import Principal.Fichero;
 import Grafo.ManejaGrafo;
-import java.awt.Frame;
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashSet;
 import javax.swing.JFileChooser;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import Principal.panelEstados;
 import com.mxgraph.swing.mxGraphComponent;
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Dimension;
+import javax.swing.filechooser.FileFilter;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
 
 /**
+ * Clase Interfaz. Esta clase se encargará de darnos una visión gráfica del
+ * automata.
  *
- * @author victo
+ * @author Víctor M. Rodríguez y Fran J. Beltrán
  */
 public class Interfaz extends javax.swing.JFrame {
 
@@ -61,10 +51,10 @@ public class Interfaz extends javax.swing.JFrame {
     private DefaultTableModel modeloTT;
 
     //VARIABLES SIMULACION PASO A PASO
-    private int indiceCadena = 0; //Indice para simular paso a paso
-    private Stack<String> ultimoEstado = new Stack(); //pila de estados
+    private int indiceCadena = 0; // Indice para simular paso a paso
+    private Stack<String> ultimoEstado = new Stack(); // Pila de estados
     private String estadoActual = "";
-    private Stack<HashSet<String>> ultimosEstados = new Stack(); //pila de cjtos de estados
+    private Stack<HashSet<String>> ultimosEstados = new Stack(); // Pila de cjtos de estados
     private HashSet<String> estadosActuales = new HashSet();
 
     ManejaGrafo grafica = new ManejaGrafo();
@@ -98,7 +88,8 @@ public class Interfaz extends javax.swing.JFrame {
     }
 
     /**
-     * Actualiza la tabla de transiciones según haya sido modificada a través de la interfaz
+     * Actualiza la tabla de transiciones según haya sido modificada a través de
+     * la interfaz
      */
     public void actualizarTabla() {
         //TODO: editar nombre estados, si es incial -> delante y si es final * delante
@@ -300,11 +291,6 @@ public class Interfaz extends javax.swing.JFrame {
         textSimbolo.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
         textSimbolo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         textSimbolo.setText("a");
-        textSimbolo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textSimboloActionPerformed(evt);
-            }
-        });
 
         jLabel5.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
         jLabel5.setText("Cargar fichero");
@@ -717,12 +703,8 @@ public class Interfaz extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void textSimboloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textSimboloActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_textSimboloActionPerformed
-
     private void comboEstadoIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboEstadoIActionPerformed
-        if (comboEstadoI.getItemCount()>0) {
+        if (comboEstadoI.getItemCount() > 0) {
             if (tipoAFD.isSelected()) {
                 afd.setEstadoInicial(comboEstadoI.getSelectedItem().toString());
             } else {
@@ -964,7 +946,55 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_botonLimpiarActionPerformed
 
     private void botonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonGuardarActionPerformed
-        // TODO add your handling code here:
+        try {
+            JFileChooser salida = new JFileChooser();
+            FileFilter txt = new FileFilter() {
+                public String getDescription() {
+                    return "Fichero TXT (*.txt)";
+                }
+
+                public boolean accept(File f) {
+                    if (f.isDirectory()) {
+                        return true;
+                    } else {
+                        return f.getName().toLowerCase().endsWith(".txt");
+                    }
+                }
+            };
+
+            salida.addChoosableFileFilter(txt);
+            salida.setFileFilter(txt);
+
+            salida.setDialogTitle("Guardar automata en un fichero");
+            int userSelection = salida.showSaveDialog(this);
+
+            if (userSelection == JFileChooser.APPROVE_OPTION) {
+                File fileToSave = salida.getSelectedFile();
+                Fichero fir = new Fichero();
+
+                String msg = "Fichero guardado en " + fileToSave.getAbsolutePath();
+                if (salida.getFileFilter().equals(txt)) {
+                    if (tipoAFD.isSelected()) {
+                        fir.generarFichero(this.afd, Paths.get(fileToSave.getAbsolutePath() + ".txt").toString(), this.cjtoEstados);
+                        msg += ".txt";
+                    } else {
+                        fir.generarFichero(this.afnd, Paths.get(fileToSave.getAbsolutePath() + ".txt").toString(), this.cjtoEstados);
+                        msg += ".txt";
+                    }
+                } else {
+                    if (tipoAFD.isSelected()) {
+                        fir.generarFichero(this.afd, Paths.get(fileToSave.getAbsolutePath()).toString(), this.cjtoEstados);
+                    } else {
+                        fir.generarFichero(this.afnd, Paths.get(fileToSave.getAbsolutePath()).toString(), this.cjtoEstados);
+                    }
+                }
+                JOptionPane.showMessageDialog(this, msg, msg, JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (java.lang.NullPointerException Ex) {
+            JOptionPane.showMessageDialog(this, "Debe generar el automata primero!", "Error al guardar fichero!", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error al guardar fichero!", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_botonGuardarActionPerformed
 
     private void textCadenaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textCadenaActionPerformed
@@ -972,9 +1002,8 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_textCadenaActionPerformed
 
     private void botonIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonIniciarActionPerformed
-        
+
         //TODO: ARREGLAR PARA AFND CON CADENAS VACIAS
-        
         if (textCadena.getText().equals("")) //Si la cadena esta vacia
             JOptionPane.showMessageDialog(this, "Error: cadena vacia", "Error", JOptionPane.ERROR_MESSAGE);
 
@@ -1086,6 +1115,7 @@ public class Interfaz extends javax.swing.JFrame {
 
     /**
      * Muestra y ejecuta la interfaz
+     *
      * @param args
      */
     public static void main(String args[]) {

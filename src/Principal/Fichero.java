@@ -13,15 +13,16 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Clase Fichero. Esta clase se encargará de manejar los ficheros de entrada y
+ * salida del autómata.
  *
- * @author FranBeltrán
+ * @author Víctor M. Rodríguez y Fran J. Beltrán
  */
 public class Fichero {
 
@@ -35,6 +36,11 @@ public class Fichero {
     private HashSet<String> conjuntoEstados = new HashSet();
     private HashSet<String> conjuntoSimbolos = new HashSet();
 
+    /**
+     * Constructor que inicializa todos los conjuntos de datos a usar.
+     *
+     * @param nombreFichero Ruta del fichero que vamos a usar.
+     */
     public Fichero(String nombreFichero) {
         this.estados_finales = new HashSet();
         this.transiciones_AFD = new HashSet();
@@ -45,6 +51,24 @@ public class Fichero {
         this.ruta = Paths.get(nombreFichero);
     }
 
+    /**
+     * Constructor que inicializa todos los conjuntos de datos a usar.
+     *
+     */
+    public Fichero() {
+        this.estados_finales = new HashSet();
+        this.transiciones_AFD = new HashSet();
+        this.transiciones_AFND = new HashSet();
+        this.transiciones_L = new HashSet();
+        this.conjuntoSimbolos = new HashSet();
+        this.conjuntoEstados = new HashSet();
+    }
+
+    /**
+     * Permite leer un fichero de un automata de tipo AFD
+     *
+     * @throws IOException Si algo no va correctamente, lanzará la excepción
+     */
     public void procesarAFD() throws IOException {
         try ( Scanner scanner = new Scanner(ruta, ENCODING.name())) {
             // Saltamos los estados
@@ -81,6 +105,11 @@ public class Fichero {
         }
     }
 
+    /**
+     * Permite leer un fichero de un automata de tipo AFND
+     *
+     * @throws IOException Si algo no va correctamente, lanzará la excepción
+     */
     public void procesarAFND() throws IOException {
         try ( Scanner scanner = new Scanner(ruta, ENCODING.name())) {
             // Saltamos los estados
@@ -124,7 +153,13 @@ public class Fichero {
         }
     }
 
-    private TransicionAFD procesarLineaAFD(String contenido) {
+    /**
+     * Procesa una linea de contenido de un fichero de tipo AFD
+     *
+     * @param contenido Linea que vamos a procesar
+     * @return
+     */
+    public TransicionAFD procesarLineaAFD(String contenido) {
         String valores[] = contenido.split(" ");
 
         this.conjuntoSimbolos.add(valores[2].split("'")[1]); //Separar las comillas simples
@@ -134,7 +169,13 @@ public class Fichero {
         return temp;
     }
 
-    private TransicionAFND procesarLineaAFND(String contenido) {
+    /**
+     * Procesa una linea de contenido de un fichero de tipo AFND
+     *
+     * @param contenido Linea que vamos a procesar
+     * @return
+     */
+    public TransicionAFND procesarLineaAFND(String contenido) {
         String valores[] = contenido.split(" ");
 
         this.conjuntoSimbolos.add(valores[2].split("'")[1]); //Separar las comillas simples
@@ -150,7 +191,14 @@ public class Fichero {
         return temp;
     }
 
-    private TransicionL procesarLineaL(String contenido) {
+    /**
+     * Procesa una linea de contenido de un fichero de tipo AFND, pero la linea
+     * es de TransicionL
+     *
+     * @param contenido Linea que vamos a procesar
+     * @return
+     */
+    public TransicionL procesarLineaL(String contenido) {
         String valores[] = contenido.split(" ");
 
         this.conjuntoEstados.add(valores[1]);
@@ -167,6 +215,11 @@ public class Fichero {
 
     }
 
+    /**
+     * Genera el automata listo para poder visualizarlo gráficamente
+     *
+     * @return
+     */
     public AFD generarAutomataAFD() {
         AFD temp = new AFD();
 
@@ -180,6 +233,11 @@ public class Fichero {
         return temp;
     }
 
+    /**
+     * Genera el automata listo para poder visualizarlo gráficamente
+     *
+     * @return
+     */
     public AFND generarAutomataAFND() {
         AFND temp = new AFND();
 
@@ -197,13 +255,29 @@ public class Fichero {
         return temp;
     }
 
-    public void generarFichero(AFD automata, String nombreFichero) {
+    /**
+     * Genera el fichero de salida de un automata
+     *
+     * @param automata Automata del que vamos a generar el fichero
+     * @param nombreFichero Nombre del fichero que vamos a exportar
+     * @param cjtoEstados Conjunto de estados del automata
+     */
+    public void generarFichero(AFD automata, String nombreFichero, HashSet<String> cjtoEstados) {
         try {
             this.salida = Paths.get(nombreFichero);
             FileWriter fw = new FileWriter(salida.toFile());
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter salida = new PrintWriter(bw);
             String mensaje = "ESTADOS:";
+
+            this.conjuntoEstados = cjtoEstados;
+            this.estado_inicial = automata.getEstadoInicial();
+            this.estados_finales = automata.getEstadosFinales();
+            this.transiciones_AFD = automata.getTransiciones();
+
+            for (TransicionAFD trans : automata.getTransiciones()) {
+                this.conjuntoSimbolos.add(String.valueOf(trans.getSimbolo()));
+            }
 
             for (String valor : this.conjuntoEstados) {
                 mensaje += " " + valor;
@@ -233,13 +307,30 @@ public class Fichero {
         }
     }
 
-    public void generarFichero(AFND automata, String nombreFichero) {
+    /**
+     * Genera el fichero de salida de un automata
+     *
+     * @param automata Automata del que vamos a generar el fichero
+     * @param nombreFichero Nombre del fichero que vamos a exportar
+     * @param cjtoEstados Conjunto de estados del automata
+     */
+    public void generarFichero(AFND automata, String nombreFichero, HashSet<String> cjtoEstados) {
         try {
             this.salida = Paths.get(nombreFichero);
             FileWriter fw = new FileWriter(salida.toFile());
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter salida = new PrintWriter(bw);
             String mensaje = "ESTADOS:";
+
+            this.conjuntoEstados = cjtoEstados;
+            this.estado_inicial = automata.getEstadoInicial();
+            this.estados_finales = automata.getEstadosFinales();
+            this.transiciones_AFND = automata.getTransiciones();
+            this.transiciones_L = automata.getTransicionesL();
+
+            for (TransicionAFND trans : automata.getTransiciones()) {
+                this.conjuntoSimbolos.add(String.valueOf(trans.getSimbolo()));
+            }
 
             for (String valor : this.conjuntoEstados) {
                 mensaje += " " + valor;
@@ -259,10 +350,10 @@ public class Fichero {
             for (TransicionAFND valor : this.transiciones_AFND) {
                 salida.println(valor);
             }
-            
+
             salida.println("TRANSICIONES_L:");
-            
-            for (TransicionL valor: this.transiciones_L) {
+
+            for (TransicionL valor : this.transiciones_L) {
                 salida.println(valor);
             }
 
@@ -275,22 +366,38 @@ public class Fichero {
         }
     }
 
+    /**
+     * Devuelve el conjunto de estados
+     *
+     * @return
+     */
     public HashSet<String> getConjuntoEstados() {
         return conjuntoEstados;
     }
 
+    /**
+     * Devuelve el conjunto de simbolos
+     *
+     * @return
+     */
     public HashSet<String> getConjuntoSimbolos() {
         return conjuntoSimbolos;
     }
 
+    /**
+     * Método que nos sirve para probar el funcionamiento de la clase
+     *
+     * @param args
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
         Fichero temp = new Fichero("D://2.txt");
         Fichero temp2 = new Fichero("D://1.txt");
 
         temp2.procesarAFND();
-        temp2.generarFichero(temp.generarAutomataAFND(), "D://pruebaAFND.txt");
-        
+        //temp2.generarFichero(temp.generarAutomataAFND(), "D://pruebaAFND.txt");
+
         temp.procesarAFD();
-        temp.generarFichero(temp2.generarAutomataAFD(), "D://pruebaAFD.txt");
+        //temp.generarFichero(temp2.generarAutomataAFD(), "D://pruebaAFD.txt");
     }
 }
