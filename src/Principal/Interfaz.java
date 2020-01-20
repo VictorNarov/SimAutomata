@@ -766,20 +766,20 @@ public class Interfaz extends javax.swing.JFrame {
 
     private void tipoAFDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoAFDActionPerformed
         this.afd = new AFD(); //Reseteamos el AFD
+        botonLimpiar.doClick(); //Limpiamos todo
         comboSimbolo.removeItem("LAMBDA");
         botonDestinos.setVisible(false);
         comboDestino.setVisible(true);
         this.botonAddT.setVisible(true);
-        actualizarTabla();
     }//GEN-LAST:event_tipoAFDActionPerformed
 
     private void tipoAFNDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoAFNDActionPerformed
         this.afnd = new AFND(); //Reseteamos el AFND
+        botonLimpiar.doClick(); //Limpiamos todo
         comboSimbolo.addItem("LAMBDA");
         botonAddT.setVisible(false);
         comboDestino.setVisible(false);
         botonDestinos.setVisible(true);
-        actualizarTabla();
     }//GEN-LAST:event_tipoAFNDActionPerformed
 
     private void botonAddSimboloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAddSimboloActionPerformed

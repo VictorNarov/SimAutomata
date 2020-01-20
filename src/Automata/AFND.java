@@ -399,7 +399,7 @@ public class AFND implements Cloneable, Proceso {
         String mensaje = "";
         HashSet<String> estados = new HashSet();
 
-        mensaje += "\nESTADOS:\n";
+        mensaje += "\nESTADOS:";
 
         for (TransicionAFND t : this.transiciones) {
             estados.add(t.getOrigen());
@@ -409,19 +409,19 @@ public class AFND implements Cloneable, Proceso {
             mensaje += e + "\n";
         }
 
-        mensaje += "ESTADO INICIAL: " + this.estadoInicial + "\n";
-        mensaje += "ESTADOS FINALES: \n";
+        mensaje += "\nESTADO INICIAL: " + this.estadoInicial;
+        mensaje += "\nESTADOS FINALES: ";
         for (String e : estadosFinales) {
-            mensaje += e;
+            mensaje += e+" ";
         }
-        mensaje += "\nTRANSICIONES:";
+        mensaje += "\nTRANSICIONES:\n";
         for (TransicionAFND t : this.transiciones) {
-            mensaje += t;
+            mensaje += t+"\n";
         }
 
-        mensaje += "\n\nTRANSICIONES_L:";
+        mensaje += "\nTRANSICIONES_L:\n";
         for (TransicionL t : this.transicionesL) {
-            mensaje += t;
+            mensaje += t+"\n";
         }
 
         return mensaje;
