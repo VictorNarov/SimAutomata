@@ -980,6 +980,9 @@ public class Interfaz extends javax.swing.JFrame {
         textEstadoActual.setText("");
         labelEstadoI.setText("Estado inicial: NO SELECCIONADO");
         labelEstadosF.setText("Estados finales: NO SELECCIONADOS");
+        labelFin.setVisible(false);
+        labelResultado.setVisible(false);
+        labelIteracion.setVisible(false);
         this.comboDestino.removeAllItems();
         this.comboOrigen.removeAllItems();
         this.comboSimbolo.removeAllItems();

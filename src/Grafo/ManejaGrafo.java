@@ -28,7 +28,6 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxStylesheet;
 import java.util.ArrayList;
 import java.util.HashSet;
-import javax.swing.JOptionPane;
 
 /**
  * Clase ManejaGrafo. Se encarga de facilitar el uso del grafo.
