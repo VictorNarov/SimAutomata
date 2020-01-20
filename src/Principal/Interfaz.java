@@ -21,7 +21,6 @@ import Automata.AFD;
 import Automata.TransicionAFD;
 import Automata.TransicionAFND;
 import Automata.TransicionL;
-import Principal.Fichero;
 import Grafo.ManejaGrafo;
 import java.io.File;
 import java.nio.file.Paths;
@@ -29,11 +28,12 @@ import java.util.HashSet;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import Principal.panelEstados;
 import com.mxgraph.swing.mxGraphComponent;
 import javax.swing.filechooser.FileFilter;
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Clase Interfaz. Esta clase se encargará de darnos una visión gráfica del
@@ -97,11 +97,9 @@ public class Interfaz extends javax.swing.JFrame {
         Object[] simbolos = cjtoSimbolos.toArray();
         ArrayList<Object> columna = new ArrayList();
 
-        //System.out.println("ESTOY PILLANDO "+Arrays.toString(simbolos));
         columna.add("ESTADOS/SIMBOLOS");
         for (int i = 0; i < cjtoSimbolos.size(); i++) {
             columna.add(simbolos[i]);
-            //System.out.println("ESTOY PILLANDO "+Arrays.toString(columna));
         }
         //Si es AFND le tenemos que añadir la columna de simbolo LAMBDA
         if (tipoAFND.isSelected()) {
@@ -116,12 +114,10 @@ public class Interfaz extends javax.swing.JFrame {
 
             if (tipoAFD.isSelected()) {
                 for (int j = 0; j < cjtoSimbolos.size(); j++) // Rellena cada columna segun el simbolo de entrada 
-                //System.out.println("VOY A VER SI EXISTE LA T: "+e+", "+ (tablaTransicion.getColumnName(j + 1)).charAt(0));
                 {
                     columna.add(afd.getTransicion(e, (tablaTransicion.getColumnName(j + 1)).charAt(0)));  // Obteniendo la transicion del AFD
                 }
-            } else //TODO
-            {
+            } else {
                 for (int j = 0; j < cjtoSimbolos.size() + 1; j++) //Tiene que contar con la columna L
                 {
                     if ((tablaTransicion.getColumnName(j + 1)).equals("L")) {
@@ -161,6 +157,48 @@ public class Interfaz extends javax.swing.JFrame {
                     JOptionPane.ERROR_MESSAGE);
         }
 
+    }
+
+    public boolean comprobarDeterminismo(AFD afd, HashSet<String> cjtoEstados, HashSet<String> cjtoSimbolos) {
+        int nTransiciones = afd.getTransiciones().size(); //Numero de transiciones del afd
+
+        if (nTransiciones == cjtoEstados.size() * cjtoSimbolos.size()) //Existe una transicion para cada estado y simbolo
+        {
+            return true;
+        } else //Tenemos que crear un nuevo estado de absorcion con las transiciones que faltan
+        {
+            return false;
+        }
+    }
+
+    public void agregarEstadoMuerto() {
+        int nCol = modeloTT.getColumnCount();
+        int nFil = modeloTT.getRowCount();
+
+        //Añadimos el estado muerto o de absorcion
+        this.cjtoEstados.add("M");
+
+        for (int i = 0; i < nFil; i++) {
+            for (int j = 1; j < nCol; j++) { //La primera columna es el nombre del estado
+                if (modeloTT.getValueAt(i, j).equals("")) {
+                    TransicionAFD t = new TransicionAFD(modeloTT.getValueAt(i, 0).toString(), modeloTT.getColumnName(j).charAt(0), "M");
+                    afd.agregarTransicion(t); //Añadimos la transicion al estado muerto o de absorcion
+                    System.out.println("AÑADIDA TRANSICION: " + t);
+
+                    modeloTT.setValueAt("M", i, j);
+                }
+            }
+        }
+        ArrayList<String> nuevoEstado = new ArrayList<>();
+        nuevoEstado.add("M");
+        for (int i = 1; i < modeloTT.getColumnCount(); i++) {
+            nuevoEstado.add("M");
+            afd.agregarTransicion("M", modeloTT.getColumnName(i).charAt(0), "M");
+        }
+        modeloTT.addRow(nuevoEstado.toArray());
+
+        actualizarTabla();
+        actualizarGrafica();
     }
 
     /**
@@ -391,10 +429,10 @@ public class Interfaz extends javax.swing.JFrame {
         });
 
         labelEstadoI.setFont(new java.awt.Font("Rockwell", 0, 12)); // NOI18N
-        labelEstadoI.setText("Estado incial: NO SLECCIONADO");
+        labelEstadoI.setText("Estado inicial: NO SELECCIONADO");
 
         labelEstadosF.setFont(new java.awt.Font("Rockwell", 0, 12)); // NOI18N
-        labelEstadosF.setText("Estados finales: NO SELECCIONADOS ");
+        labelEstadosF.setText("Estados finales: NO SELECCIONADOS");
 
         botonEliminarSimbolo.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
         botonEliminarSimbolo.setText("Eliminar");
@@ -509,7 +547,7 @@ public class Interfaz extends javax.swing.JFrame {
                         .addComponent(jLabel11)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(botonLimpiar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 569, Short.MAX_VALUE)
                         .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -603,7 +641,7 @@ public class Interfaz extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(botonEliminarSimbolo)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE)))
+                        .addComponent(scroll)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -615,8 +653,7 @@ public class Interfaz extends javax.swing.JFrame {
                         .addComponent(jScrollPane1))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(26, 26, 26)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 458, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
@@ -665,7 +702,7 @@ public class Interfaz extends javax.swing.JFrame {
                                     .addComponent(jLabel8)
                                     .addComponent(botonEstadosF)
                                     .addComponent(labelEstadosF))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(15, 15, 15)
                                 .addComponent(jLabel13)
                                 .addGap(1, 1, 1)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -687,7 +724,8 @@ public class Interfaz extends javax.swing.JFrame {
                                     .addComponent(textSimboloActual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(botonSiguiente)
                                     .addComponent(botonAnterior)
-                                    .addComponent(labelResultado))))
+                                    .addComponent(labelResultado)))
+                            .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 458, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -879,18 +917,32 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_botonEstadosFActionPerformed
 
     private void botonSimularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSimularActionPerformed
-        if (tipoAFD.isSelected()) {
-            if (afd.reconocer(textCadena.getText())) {
-                JOptionPane.showConfirmDialog(rootPane, "CADENA RECONOCIDA", "RESULTADO DEL AUTOMATA", JOptionPane.PLAIN_MESSAGE, JOptionPane.INFORMATION_MESSAGE);
+        try {
+
+            if (tipoAFD.isSelected()) {
+                if (comprobarDeterminismo(this.afd, this.cjtoEstados, this.cjtoSimbolos)) {
+                    System.out.println("DETERMINISMO DEL AFD CORRECTO");
+                } else {
+                    System.out.println("INDETERMINISMO EN EL AFD! -> SE CREARÁ ESTADO MUERTO M");
+                    JOptionPane.showMessageDialog(this, "Indeterminismo en el AFD!\n(No ha indicado todas las transiciones para cada estado y símbolo)\n"
+                            + "Se procederá a crear un nuevo estado de absorción o muerto M", "Error", JOptionPane.WARNING_MESSAGE);
+                    this.agregarEstadoMuerto();
+                }
+
+                if (afd.reconocer(textCadena.getText())) {
+                    JOptionPane.showConfirmDialog(rootPane, "CADENA RECONOCIDA", "RESULTADO DEL AUTOMATA", JOptionPane.PLAIN_MESSAGE, JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showConfirmDialog(rootPane, "CADENA NO RECONOCIDA", "RESULTADO DEL AUTOMATA", JOptionPane.PLAIN_MESSAGE, JOptionPane.ERROR_MESSAGE);
+                }
             } else {
-                JOptionPane.showConfirmDialog(rootPane, "CADENA NO RECONOCIDA", "RESULTADO DEL AUTOMATA", JOptionPane.PLAIN_MESSAGE, JOptionPane.ERROR_MESSAGE);
+                if (afnd.reconocer(textCadena.getText())) {
+                    JOptionPane.showConfirmDialog(rootPane, "CADENA RECONOCIDA", "RESULTADO DEL AUTOMATA", JOptionPane.PLAIN_MESSAGE, JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showConfirmDialog(rootPane, "CADENA NO RECONOCIDA", "RESULTADO DEL AUTOMATA", JOptionPane.PLAIN_MESSAGE, JOptionPane.ERROR_MESSAGE);
+                }
             }
-        } else {
-            if (afnd.reconocer(textCadena.getText())) {
-                JOptionPane.showConfirmDialog(rootPane, "CADENA RECONOCIDA", "RESULTADO DEL AUTOMATA", JOptionPane.PLAIN_MESSAGE, JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showConfirmDialog(rootPane, "CADENA NO RECONOCIDA", "RESULTADO DEL AUTOMATA", JOptionPane.PLAIN_MESSAGE, JOptionPane.ERROR_MESSAGE);
-            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error en la siulación!", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_botonSimularActionPerformed
 
@@ -948,6 +1000,8 @@ public class Interfaz extends javax.swing.JFrame {
     private void botonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonGuardarActionPerformed
         try {
             JFileChooser salida = new JFileChooser();
+            String currentPath = Paths.get("./src/Ficheros").toAbsolutePath().normalize().toString();
+            salida.setCurrentDirectory(new File(currentPath));
             FileFilter txt = new FileFilter() {
                 public String getDescription() {
                     return "Fichero TXT (*.txt)";
@@ -1002,115 +1056,153 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_textCadenaActionPerformed
 
     private void botonIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonIniciarActionPerformed
-
-        //TODO: ARREGLAR PARA AFND CON CADENAS VACIAS
-        if (textCadena.getText().equals("")) //Si la cadena esta vacia
-            JOptionPane.showMessageDialog(this, "Error: cadena vacia", "Error", JOptionPane.ERROR_MESSAGE);
-
-        else if (indiceCadena == 0) //Vamos a empezar la simulacion
-        {
-            botonSiguiente.setEnabled(true); //activamos el boton siguiente
-            labelIteracion.setVisible(true);
-            labelIteracion.setText("Iteración: 1");
-            String estadoI;
-            if (tipoAFD.isSelected()) {
-                estadoI = afd.getEstadoInicial();
-                estadoActual = estadoI;
-                scroll.getViewport().add(grafica.simularAFD(afd, cjtoEstados, estadoActual));
-            } else {
-                estadoI = afnd.getEstadoInicial();
-                estadosActuales.addAll(afnd.L_clausura(estadoI));
-                scroll.getViewport().add(grafica.simularAFND(afnd, cjtoEstados, estadosActuales));
+        try {
+            //CONTROL DE EXCEPCIONES
+            if (labelEstadoI.getText().equals("Estado inicial: NO SELECCIONADO")) {
+                throw new Exception("Error: estado inicial no seleccionado!");
             }
 
-            textEstadoActual.setText(estadoI);
-            textSimboloActual.setText(textCadena.getText().charAt(0) + ""); //caracter inicial
-
-            botonIniciar.setText("Reiniciar");
-        } else //Pulsa boton reiniciar
-        {
-            indiceCadena = 0;
-            labelIteracion.setVisible(false);
-            labelResultado.setVisible(false);
-            labelFin.setVisible(false);
-            estadoActual = "";
-            estadosActuales.clear();
-            ultimoEstado.clear();
-            ultimosEstados.clear();
-            textEstadoActual.setText("");
-            textSimboloActual.setText("");
-            botonIniciar.setText("Iniciar");
-            botonSiguiente.setEnabled(false);
-            botonAnterior.setEnabled(false);
-            if (tipoAFD.isSelected()) {
-                scroll.getViewport().add(grafica.simularAFD(afd, cjtoEstados, estadoActual)); //reiniciamos la vista del grafo
-            } else {
-                scroll.getViewport().add(grafica.simularAFND(afnd, cjtoEstados, estadosActuales));
+            if (this.labelEstadosF.getText().equals("Estados finales: NO SELECCIONADOS")) {
+                throw new Exception("Error: no ha seleccionado ningún estado final!");
             }
+
+            if (tipoAFD.isSelected() && textCadena.getText().equals("")) //Si la cadena esta vacia
+            {
+                throw new Exception("Error: cadena vacia");
+            }
+
+            if (indiceCadena == 0) //Vamos a empezar la simulacion
+            {
+                botonSiguiente.setEnabled(true); //activamos el boton siguiente
+                labelIteracion.setVisible(true);
+                labelIteracion.setText("Iteración: 1");
+                String estadoI;
+                if (tipoAFD.isSelected()) {
+                    if (comprobarDeterminismo(this.afd, this.cjtoEstados, this.cjtoSimbolos)) {
+                        System.out.println("DETERMINISMO DEL AFD CORRECTO");
+                    } else {
+                        System.out.println("INDETERMINISMO EN EL AFD! -> SE CREARÁ ESTADO MUERTO M");
+                        JOptionPane.showMessageDialog(this, "Indeterminismo en el AFD!\n(No ha indicado todas las transiciones para cada estado y símbolo)\n"
+                                + "Se procederá a crear un nuevo estado de absorción o muerto M", "Error", JOptionPane.WARNING_MESSAGE);
+                        this.agregarEstadoMuerto();
+                    }
+                    estadoI = afd.getEstadoInicial();
+                    estadoActual = estadoI;
+                    scroll.getViewport().add(grafica.simularAFD(afd, cjtoEstados, estadoActual));
+                } else {
+                    estadoI = afnd.getEstadoInicial();
+                    estadosActuales.addAll(afnd.L_clausura(estadoI));
+                    scroll.getViewport().add(grafica.simularAFND(afnd, cjtoEstados, estadosActuales));
+                }
+
+                textEstadoActual.setText(estadoI);
+                if (!textCadena.getText().isBlank()) {
+                    textSimboloActual.setText(textCadena.getText().substring(0, 1) + ""); //caracter inicial
+                }
+                botonIniciar.setText("Reiniciar");
+            } else //Pulsa boton reiniciar
+            {
+                indiceCadena = 0;
+                labelIteracion.setVisible(false);
+                labelResultado.setVisible(false);
+                labelFin.setVisible(false);
+                estadoActual = "";
+                estadosActuales.clear();
+                ultimoEstado.clear();
+                ultimosEstados.clear();
+                textEstadoActual.setText("");
+                textSimboloActual.setText("");
+                botonIniciar.setText("Iniciar");
+                botonSiguiente.setEnabled(false);
+                botonAnterior.setEnabled(false);
+                if (tipoAFD.isSelected()) {
+                    scroll.getViewport().add(grafica.generarAFD(afd, cjtoEstados)); //reiniciamos la vista del grafo
+                } else {
+                    scroll.getViewport().add(grafica.generarAFND(afnd, cjtoEstados));
+                }
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error en la simulación", JOptionPane.ERROR_MESSAGE);
+            //Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_botonIniciarActionPerformed
 
     private void botonSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSiguienteActionPerformed
-        if (indiceCadena == 0) {
-            botonAnterior.setEnabled(true);
-        }
-        if (tipoAFD.isSelected()) {
-            ultimoEstado.push(estadoActual);
-            estadoActual = afd.getTransicion(estadoActual, textCadena.getText().charAt(indiceCadena));
-            textEstadoActual.setText(estadoActual);
-            scroll.getViewport().add(grafica.simularAFD(afd, cjtoEstados, estadoActual));
-        } else {
-            ultimosEstados.push(estadosActuales);
-            estadosActuales = afnd.getTransicion(estadosActuales, textCadena.getText().charAt(indiceCadena));
-            estadosActuales = afnd.L_clausura(estadosActuales);
-            textEstadoActual.setText(estadosActuales.toString());
-            scroll.getViewport().add(grafica.simularAFND(afnd, cjtoEstados, estadosActuales));
-        }
-        indiceCadena++;
-        if (indiceCadena == textCadena.getText().length()) //Fin de cadena
-        {
-            botonSiguiente.setEnabled(false);
-            labelFin.setVisible(true);
-            if (tipoAFD.isSelected() && afd.esFinal(estadoActual)) {
-                labelResultado.setText("RECONOCIDA");
-            } else if (tipoAFD.isSelected() && !afd.esFinal(estadoActual)) {
-                labelResultado.setText("NO RECONOCIDA");
-            } else if (tipoAFND.isSelected() && afnd.esFinal(estadosActuales)) {
-                labelResultado.setText("RECONOCIDA");
-            } else {
-                labelResultado.setText("NO RECONOCIDA");
+        try {
+            if (indiceCadena == 0) {
+                botonAnterior.setEnabled(true);
             }
-            labelResultado.setVisible(true);
-        } else {
-            textSimboloActual.setText(textCadena.getText().charAt(indiceCadena) + "");
-            labelIteracion.setText("Iteración: " + (indiceCadena + 1));
-        }
+            if (tipoAFD.isSelected()) {
+                ultimoEstado.push(estadoActual);
+                estadoActual = afd.getTransicion(estadoActual, textCadena.getText().charAt(indiceCadena));
+                textEstadoActual.setText(estadoActual);
+                scroll.getViewport().add(grafica.simularAFD(afd, cjtoEstados, estadoActual));
+            } else {
+                ultimosEstados.push(estadosActuales);
+                if (!textCadena.getText().isBlank()) {
+                    estadosActuales = afnd.getTransicion(estadosActuales, textCadena.getText().charAt(indiceCadena));
+                }
+                estadosActuales = afnd.L_clausura(estadosActuales);
+                textEstadoActual.setText(estadosActuales.toString());
+                scroll.getViewport().add(grafica.simularAFND(afnd, cjtoEstados, estadosActuales));
+            }
+            indiceCadena++;
+            if (indiceCadena == textCadena.getText().length()) //Fin de cadena
+            {
+                botonSiguiente.setEnabled(false);
+                labelFin.setVisible(true);
+                if (tipoAFD.isSelected() && afd.esFinal(estadoActual)) {
+                    labelResultado.setText("RECONOCIDA");
+                } else if (tipoAFD.isSelected() && !afd.esFinal(estadoActual)) {
+                    labelResultado.setText("NO RECONOCIDA");
+                } else if (tipoAFND.isSelected() && afnd.esFinal(estadosActuales)) {
+                    labelResultado.setText("RECONOCIDA");
+                } else {
+                    labelResultado.setText("NO RECONOCIDA");
+                }
+                labelResultado.setVisible(true);
+            } else {
+                if (!textCadena.getText().isBlank()) {
+                    textSimboloActual.setText(textCadena.getText().charAt(indiceCadena) + "");
+                }
+                labelIteracion.setText("Iteración: " + (indiceCadena + 1));
+            }
+        } catch (Exception ex) {
 
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error en la simulación", JOptionPane.ERROR_MESSAGE);
+            //Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }//GEN-LAST:event_botonSiguienteActionPerformed
 
     private void botonAnteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAnteriorActionPerformed
-        indiceCadena--;
-        labelResultado.setVisible(false);
-        labelFin.setVisible(false);
-        botonSiguiente.setEnabled(true);
-        labelIteracion.setText("Iteración: " + (indiceCadena + 1));
+        try {
+            indiceCadena--;
+            labelResultado.setVisible(false);
+            labelFin.setVisible(false);
+            botonSiguiente.setEnabled(true);
+            labelIteracion.setText("Iteración: " + (indiceCadena + 1));
 
-        if (tipoAFD.isSelected()) {
-            estadoActual = ultimoEstado.pop();
-            textEstadoActual.setText(estadoActual);
-            scroll.getViewport().add(grafica.simularAFD(afd, cjtoEstados, estadoActual));
-        } else {
-            estadosActuales = ultimosEstados.pop();
-            textEstadoActual.setText(ultimosEstados.toString());
-            scroll.getViewport().add(grafica.simularAFND(afnd, cjtoEstados, estadosActuales));
+            if (tipoAFD.isSelected()) {
+                estadoActual = ultimoEstado.pop();
+                textEstadoActual.setText(estadoActual);
+                scroll.getViewport().add(grafica.simularAFD(afd, cjtoEstados, estadoActual));
+            } else {
+                estadosActuales = ultimosEstados.pop();
+                textEstadoActual.setText(ultimosEstados.toString());
+                scroll.getViewport().add(grafica.simularAFND(afnd, cjtoEstados, estadosActuales));
+            }
+            if (!textCadena.getText().isBlank()) {
+                textSimboloActual.setText(textCadena.getText().charAt(indiceCadena) + "");
+            }
+
+            if (indiceCadena == 0) {
+                botonAnterior.setEnabled(false);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error en la simulación", JOptionPane.ERROR_MESSAGE);
+            //Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
         }
-        textSimboloActual.setText(textCadena.getText().charAt(indiceCadena) + "");
-
-        if (indiceCadena == 0) {
-            botonAnterior.setEnabled(false);
-        }
-
     }//GEN-LAST:event_botonAnteriorActionPerformed
 
     /**

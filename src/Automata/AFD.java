@@ -16,9 +16,10 @@
  */
 package Automata;
 
-import Automata.TransicionAFD;
 import Principal.Proceso;
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Clase Autómata Finito Determinista. Los estados son cadenas de caracteres
@@ -196,14 +197,26 @@ public class AFD implements Cloneable, Proceso {
      * @param cadena Símbolos de entrada a reconocer por el autómata
      * @return verdadero si la cadena es reconocida por el autómata (pertenece a
      * su lenguaje formado)
+     * @throws java.lang.Exception Si el autómata no es válido
      */
     @Override
-    public boolean reconocer(String cadena) {
+    public boolean reconocer(String cadena) throws Exception {
+        //CONTROL DE EXCEPCIONES
+        if (this.estadoInicial.equals("")) {
+            throw new Exception("Error: no ha indicado ningún estado inicial!");
+        }
+        if (this.getEstadosFinales().isEmpty()) {
+            throw new Exception("Error: no ha indicado ningún estado final!");
+        }
+        
         char[] simbolo = cadena.toCharArray();
         String estado = this.getEstadoInicial();
 
         for (int i = 0; i < simbolo.length; i++) {
             estado = getTransicion(estado, simbolo[i]);
+            if (estado.equals("")) {
+                throw new Exception("Error: transicion con caracter '" + simbolo[i] + "' no válida!");
+            }
         }
 
         return esFinal(estado);
@@ -263,21 +276,27 @@ public class AFD implements Cloneable, Proceso {
 
         System.out.println(automata);
 
-        if (automata.reconocer("101")) {
-            System.out.println("RECONOCIDO");
-        } else {
-            System.out.println("NO RECONOCIDO");
+        automata.setEstadoInicial("q0");
+
+        try {
+            if (automata.reconocer("101")) {
+                System.out.println("RECONOCIDO");
+            } else {
+                System.out.println("NO RECONOCIDO");
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(AFD.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     /**
-     * Devuelve una copia del autómata. Se crean nuevos objetos, no se clonan las
-     * referencias
+     * Devuelve una copia del autómata. Se crean nuevos objetos, no se clonan
+     * las referencias
      *
      * @return
      */
     @Override
-    public Object clone() {
+    public Object clone() throws CloneNotSupportedException {
         AFD copia = null;
         try {
             copia = (AFD) super.clone(); //Hace una copia binaria de los objetos
@@ -285,7 +304,7 @@ public class AFD implements Cloneable, Proceso {
             System.out.println("Clone no soportado");
         }
         //Como el clone de HashSet hace solo una copia superficial, tenemos que copia a mano los elementos
-        copia.estadosFinales = new HashSet<String>();
+        copia.estadosFinales = new HashSet<>();
         for (String estado : this.estadosFinales) {
             copia.estadosFinales.add(estado);
         }

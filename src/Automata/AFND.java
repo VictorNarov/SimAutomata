@@ -237,9 +237,10 @@ public class AFND implements Cloneable, Proceso {
 
         transicionesL.forEach((transicionL) -> { //Recorremos las L-Transiciones
             if (transicionL.getOrigen().equals(estado)) { //con origen ese estado
-                transicionL.getDestinos().forEach((estado_destino) -> {
+                transicionL.getDestinos().forEach((estado_destino) -> {      
                     //Y añadimos a la solucion todos los estados de la LC del destino
-                    solucion.addAll(L_clausura(estado_destino));
+                    if(!estado_destino.equals(transicionL.getOrigen()))//Evitamos un bucle infinito
+                        solucion.addAll(L_clausura(estado_destino));
                 });
             }
         });
@@ -260,7 +261,7 @@ public class AFND implements Cloneable, Proceso {
 
         estados.forEach((estado) -> {
             HashSet<String> valores = L_clausura(estado); //Aplicamos la clausura a cada estado del conjunto
-
+            
             for (String valor : valores) {
                 solucion.add(valor); //Añadimos cada destino obtenido
             }
@@ -280,19 +281,33 @@ public class AFND implements Cloneable, Proceso {
      * @param cadena Símbolos de entrada a reconocer por el autómata
      * @return verdadero si la cadena es reconocida por el autómata (pertenece a
      * su lenguaje formado)
+     * @throws java.lang.Exception Si el autómata no es válid
      */
-    public boolean reconocer(String cadena) {
+    @Override
+    public boolean reconocer(String cadena) throws Exception {
+        //CONTROL DE EXCEPCIONES
+        if (this.estadoInicial.equals("")) {
+            throw new Exception("Error: no ha indicado ningún estado inicial!");
+        }
+        if (this.getEstadosFinales().isEmpty()) {
+            throw new Exception("Error: no ha indicado ningún estado final!");
+        }
+        
         char[] simbolo = cadena.toCharArray();
         HashSet<String> estado = new HashSet();
         estado.add(this.getEstadoInicial());
         estado = L_clausura(estado); //Partimos de la clausura del estado inicial
 
         for (int i = 0; i < simbolo.length; i++) {
-
+            
             estado = getTransicion(estado, simbolo[i]); //Primero evolucionamos consumiendo simbolo
-
+            
             for (String estado_accesible : L_clausura(estado)) {
                 estado.add(estado_accesible); //Añadimos la clausura de todos los estados destino
+            }
+            
+            if (estado.isEmpty()) {
+                throw new Exception("Error: transicion con caracter '" + simbolo[i] + "' no válida!");
             }
 
         }
