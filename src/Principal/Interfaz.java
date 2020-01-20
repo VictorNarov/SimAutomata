@@ -825,6 +825,7 @@ public class Interfaz extends javax.swing.JFrame {
             afnd.eliminarEstado(estado);
         }
         actualizarTabla();
+        actualizarGrafica();
     }//GEN-LAST:event_botonEliminarEstadoActionPerformed
 
     private void botonEliminarTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminarTActionPerformed
@@ -832,22 +833,22 @@ public class Interfaz extends javax.swing.JFrame {
             for (int i : tablaTransicion.getSelectedRows()) {
                 System.out.println("Eliminando fila: " + i);
                 String origen = modeloTT.getValueAt(i, 0).toString();
-                String destino = modeloTT.getValueAt(i, 1).toString();
-
-                for (int j = 1; j <= modeloTT.getColumnCount() - 1; j++) {//Por cada simbolo
+ 
+                for (int j = 1; j < modeloTT.getColumnCount(); j++) {//Por cada simbolo
+                    String destino = modeloTT.getValueAt(i, j).toString();
                     TransicionAFD t = new TransicionAFD(origen, modeloTT.getColumnName(j).charAt(0), destino);
                     System.out.println("Eliminar transicion " + t);
                     afd.eliminarTransicion(t); //Borramos la transicion 
                 }
 
             }
-        }
-
+        }//TODO eliminar AFND
+        
         actualizarTabla();
+        actualizarGrafica();  
     }//GEN-LAST:event_botonEliminarTActionPerformed
 
     private void botonCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCargarActionPerformed
-        // TODO add your handling code here:
         JFileChooser selectorArchivos = new JFileChooser();
         String currentPath = Paths.get("./src/Ficheros").toAbsolutePath().normalize().toString();
         selectorArchivos.setCurrentDirectory(new File(currentPath));

@@ -1,5 +1,5 @@
-/* 
- * Copyright (C) 2020 Víctor Manuel Rodríguez Navarro
+/*
+ * Copyright (C) 2020 victo
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,14 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package Principal;
-
 /**
- * Interface que implementan los AFD y AFND
- * @author Víctor M. Rodríguez y Fran J. Beltrán
+ * Este paquete contiene la clase ManejaGrafo.java la cual hace uso de la librería externa JGraphX para la representación visual de los autómatas 
+ * y el manejo de su atributo de tipo Grafo, el cual hereda de la clase mxGraph de la librería mencionada anteriormente.
  */
-public interface Proceso {
-    public abstract boolean esFinal(String estado); // True si estado es un estado final
-    public abstract boolean reconocer(String cadena) throws Exception; // True si la cadena es reconocida
-    public abstract String toString(); // Muestra las transiciones y estados finales
-}
+package Grafo;

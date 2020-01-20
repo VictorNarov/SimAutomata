@@ -23,6 +23,8 @@ import java.util.Objects;
  * símbolo de entrada es un caracter (Character).
  *
  * @author Víctor M. Rodríguez y Fran J. Beltrán
+ * @see Automata.AFD
+ * 
  */
 public class TransicionAFD {
 

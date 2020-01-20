@@ -16,7 +16,6 @@
  */
 package Automata;
 
-import Principal.Proceso;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +29,7 @@ import java.util.logging.Logger;
  * finales.
  *
  * @author Víctor M. Rodríguez y Fran J. Beltrán
+ * 
  */
 public class AFD implements Cloneable, Proceso {
 

@@ -1,6 +1,5 @@
 package Automata;
 
-import Principal.Proceso;
 import java.util.HashSet;
 
 /**
