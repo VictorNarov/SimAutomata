@@ -159,18 +159,24 @@ public class Interfaz extends javax.swing.JFrame {
 
     }
 
+    /**
+     * Comprueba si un AFD tiene para cada estado y simbolo una transición. Es
+     * decir, tiene la tabla de transiciones completa.
+     *
+     * @param afd Automata pasado por parámetro
+     * @param cjtoEstados Conjunto de estados
+     * @param cjtoSimbolos Conjunto de simbolos
+     * @return
+     */
     public boolean comprobarDeterminismo(AFD afd, HashSet<String> cjtoEstados, HashSet<String> cjtoSimbolos) {
         int nTransiciones = afd.getTransiciones().size(); //Numero de transiciones del afd
-
-        if (nTransiciones == cjtoEstados.size() * cjtoSimbolos.size()) //Existe una transicion para cada estado y simbolo
-        {
-            return true;
-        } else //Tenemos que crear un nuevo estado de absorcion con las transiciones que faltan
-        {
-            return false;
-        }
+        return (nTransiciones == cjtoEstados.size() * cjtoSimbolos.size()); //Existe una transicion para cada estado y simbolo
+        //Si no, tenemos que crear un nuevo estado de absorcion con las transiciones que faltan
     }
 
+    /**
+     * Agrega un estado muerto de absorción, para corregir la falta de determinismo de un AFD
+     */
     public void agregarEstadoMuerto() {
         int nCol = modeloTT.getColumnCount();
         int nFil = modeloTT.getRowCount();
@@ -269,7 +275,7 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Rockwell", 0, 12)); // NOI18N
         jLabel1.setText("SimAutomata - Víctor Rodríguez y Fran Beltrán - 2019");
 
-        tablaTransicion.setFont(new java.awt.Font("Rockwell", 0, 24)); // NOI18N
+        tablaTransicion.setFont(new java.awt.Font("Rockwell", 0, 20)); // NOI18N
         tablaTransicion.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null},
@@ -298,6 +304,7 @@ public class Interfaz extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tablaTransicion);
         if (tablaTransicion.getColumnModel().getColumnCount() > 0) {
             tablaTransicion.getColumnModel().getColumn(0).setResizable(false);
+            tablaTransicion.getColumnModel().getColumn(0).setPreferredWidth(20);
         }
 
         botonSimular.setFont(new java.awt.Font("Rockwell", 0, 14)); // NOI18N
@@ -540,14 +547,14 @@ public class Interfaz extends javax.swing.JFrame {
                         .addComponent(jLabel10)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(botonEliminarT))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 371, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel11)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(botonLimpiar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 569, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -640,8 +647,9 @@ public class Interfaz extends javax.swing.JFrame {
                                 .addComponent(botonAddSimbolo)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(botonEliminarSimbolo)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(scroll)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -833,7 +841,7 @@ public class Interfaz extends javax.swing.JFrame {
             for (int i : tablaTransicion.getSelectedRows()) {
                 System.out.println("Eliminando fila: " + i);
                 String origen = modeloTT.getValueAt(i, 0).toString();
- 
+
                 for (int j = 1; j < modeloTT.getColumnCount(); j++) {//Por cada simbolo
                     String destino = modeloTT.getValueAt(i, j).toString();
                     TransicionAFD t = new TransicionAFD(origen, modeloTT.getColumnName(j).charAt(0), destino);
@@ -843,9 +851,9 @@ public class Interfaz extends javax.swing.JFrame {
 
             }
         }//TODO eliminar AFND
-        
+
         actualizarTabla();
-        actualizarGrafica();  
+        actualizarGrafica();
     }//GEN-LAST:event_botonEliminarTActionPerformed
 
     private void botonCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCargarActionPerformed

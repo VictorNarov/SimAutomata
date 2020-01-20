@@ -178,6 +178,7 @@ public class ManejaGrafo {
      * @param cjtoEstados
      * @param estadoActivo
      * @return objeto mxGraphComponent para su representación gráfica
+     * @throws java.lang.Exception si algo sale mal, se lanzará
      */
     public mxGraphComponent simularAFD(AFD automata, HashSet<String> cjtoEstados, String estadoActivo) throws Exception {
         objEstados.clear();
