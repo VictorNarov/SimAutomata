@@ -4,7 +4,7 @@ Simulador de Autómatas Finitos Deterministas (AFD) y Autómatas Finitos No Dete
 
 ## Dependencias
 ###### Plataforma [Java JDK 13](https://www.oracle.com/technetwork/java/javase/downloads/jdk13-downloads-5672538.html)
-###### Librería [mxGraph 4.0.6](https://github.com/jgraph/mxgraph/releases)
+###### Librería [JGraphX 4.0.6](https://github.com/jgraph/jgraphx/releases/tag/v4.0.6)
 
 ## Paquete Autómata
 El paquete Autómata permite la creación de Autómatas Finitos Deterministas (AFD.java) haciendo uso de las TransicionesAFD para poder procesar cadenas de entrada mediante el método reconocer(String cadena).
